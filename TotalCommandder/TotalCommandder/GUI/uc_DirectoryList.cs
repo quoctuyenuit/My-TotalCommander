@@ -13,32 +13,35 @@ namespace TotalCommandder.GUI
 {
     public partial class uc_DirectoryList : UserControl
     {
-        private static uc_DirectoryList instances;
-
-        public static uc_DirectoryList Instances
-        {
-            get
-            {
-                if (instances == null)
-                    instances = new uc_DirectoryList();
-                return uc_DirectoryList.instances;
-            }
-            set { uc_DirectoryList.instances = value; }
-        }
-
         Stack<string> listBack;
 
-        public string copyPath { get; set; }
+        public delegate string DgetCopyPath();
 
-        public bool isCopy { get; set; }
+        public DgetCopyPath getCopyPath;
 
-        public delegate void DgetCopy(string path, bool isCopy);
-        public DgetCopy getCopy;
+        public delegate void DgetCopyAction(string path, bool isCopy);
+        
+        public DgetCopyAction getCopyAction;
+
+        public delegate void DgetPasteAction(string path);
+
+        public DgetPasteAction getPasteAction;
+
+        public delegate void DgetRefreshAction(Form1.Drefresh refresh);
+
+        public DgetRefreshAction getRefreshAction;
 
         public uc_DirectoryList()
         {
             InitializeComponent();
             listBack = new Stack<string>();
+            
+        }
+
+        void refresh()
+        {
+            lvMain.Clear();
+            showDirectoryAndFiles();
         }
 
         private void uc_DirectoryList_Load(object sender, EventArgs e)
@@ -46,6 +49,8 @@ namespace TotalCommandder.GUI
             showDrives();
             cbPath.Text = "This PC";
             listBack.Push(cbPath.Text);
+            if (getRefreshAction != null)
+                getRefreshAction(new Form1.Drefresh(refresh));
         }
 
         private void showDrives()
@@ -147,50 +152,43 @@ namespace TotalCommandder.GUI
 
         private void contextMenu_Opening(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrEmpty(copyPath))
-                menuItemPaste.Enabled = false;
-            else
-                menuItemPaste.Enabled = true;
+            if (getCopyPath != null)
+            {
+                if (string.IsNullOrEmpty(getCopyPath()))
+                    menuItemPaste.Enabled = false;
+                else
+                    menuItemPaste.Enabled = true;
 
-            foreach (ListViewItem item in lvMain.Items)
-                if (item.Selected && !cbPath.Text.Equals("This PC"))
-                {
-                    menuItemCopy.Enabled = true;
-                    menuItemCut.Enabled = true;
-                    menuItemDelete.Enabled = true;
-                    return;
-                }
-            menuItemCopy.Enabled = false;
-            menuItemCut.Enabled = false;
-            menuItemDelete.Enabled = false;
+                foreach (ListViewItem item in lvMain.Items)
+                    if (item.Selected && !cbPath.Text.Equals("This PC"))
+                    {
+                        menuItemCopy.Enabled = true;
+                        menuItemCut.Enabled = true;
+                        menuItemDelete.Enabled = true;
+                        return;
+                    }
+                menuItemCopy.Enabled = false;
+                menuItemCut.Enabled = false;
+                menuItemDelete.Enabled = false;
+            }
         }
 
         private void menuItemCopy_Click(object sender, EventArgs e)
         {
-            if (getCopy != null)
-                getCopy(cbPath.Text + lvMain.FocusedItem.Text, true);
+            if (getCopyAction != null)
+                getCopyAction(cbPath.Text + lvMain.FocusedItem.Text, true);
         }
 
         private void menuItemCut_Click(object sender, EventArgs e)
         {
-            this.copyPath = "";
-
-            this.copyPath = cbPath.Text + lvMain.FocusedItem.Text;
-
-            this.isCopy = false;
+            if (getCopyAction != null)
+                getCopyAction(cbPath.Text + lvMain.FocusedItem.Text, false);
         }
 
         private void menuItemPaste_Click(object sender, EventArgs e)
         {
-            BLL.ClassBLL.Instances.copyDirectory(this.copyPath, cbPath.Text);
-
-            if (!isCopy)//Nếu là chức năng Cut thì xóa bản cũ
-            {
-                if (Directory.Exists(copyPath))
-                    Directory.Delete(copyPath, true);
-                else
-                    File.Delete(copyPath);
-            }
+            if (getPasteAction != null)
+                getPasteAction(cbPath.Text);
 
             lvMain.Clear();
 
@@ -213,8 +211,10 @@ namespace TotalCommandder.GUI
         }
 
         public delegate string DgetFolderName();
+
         public DgetFolderName getFolderName;
-        public void getAction(DgetFolderName getFolderName)
+
+        public void getFolderNameAction(DgetFolderName getFolderName)
         {
             this.getFolderName = getFolderName;
         }
@@ -222,7 +222,7 @@ namespace TotalCommandder.GUI
         private void menuItemNewFolder_Click(object sender, EventArgs e)
         {
             NewFolderForm frm = new NewFolderForm();
-            frm.getAction = new NewFolderForm.DgetAction(getAction);
+            frm.getAction = new NewFolderForm.DgetAction(getFolderNameAction);
             frm.ShowDialog();
             if (getFolderName != null)
                 Directory.CreateDirectory(cbPath.Text + getFolderName());

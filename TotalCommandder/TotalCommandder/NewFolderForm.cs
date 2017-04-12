@@ -19,6 +19,7 @@ namespace TotalCommandder
         }
 
         public delegate void DgetAction(GUI.uc_DirectoryList.DgetFolderName getFolderName);
+        
         public DgetAction getAction;
 
         public string getFolderName()
