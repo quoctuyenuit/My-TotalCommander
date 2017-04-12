@@ -1,0 +1,11 @@
+c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\bin\Debug\TotalCommandder.exe
+c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\bin\Debug\TotalCommandder.pdb
+c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.csprojResolveAssemblyReference.cache
+c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.Form1.resources
+c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.GUI.uc_DirectoryList.resources
+c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.Properties.Resources.resources
+c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.csproj.GenerateResource.Cache
+c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.exe.licenses
+c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.exe
+c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.pdb
+c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.NewFolderForm.resources
