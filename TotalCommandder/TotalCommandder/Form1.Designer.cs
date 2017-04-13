@@ -56,7 +56,7 @@
             this.ribbonControl1.ShowPageHeadersMode = DevExpress.XtraBars.Ribbon.ShowPageHeadersMode.ShowOnMultiplePages;
             this.ribbonControl1.ShowQatLocationSelector = false;
             this.ribbonControl1.ShowToolbarCustomizeItem = false;
-            this.ribbonControl1.Size = new System.Drawing.Size(1224, 128);
+            this.ribbonControl1.Size = new System.Drawing.Size(1392, 128);
             this.ribbonControl1.Toolbar.ShowCustomizeItem = false;
             // 
             // ribbonPage1
@@ -76,8 +76,8 @@
             this.splitMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitMain.Location = new System.Drawing.Point(0, 128);
             this.splitMain.Name = "splitMain";
-            this.splitMain.Size = new System.Drawing.Size(1224, 571);
-            this.splitMain.SplitterDistance = 603;
+            this.splitMain.Size = new System.Drawing.Size(1392, 645);
+            this.splitMain.SplitterDistance = 685;
             this.splitMain.TabIndex = 1;
             // 
             // Form1
@@ -85,12 +85,13 @@
             this.AllowFormGlass = DevExpress.Utils.DefaultBoolean.False;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1224, 699);
+            this.ClientSize = new System.Drawing.Size(1392, 773);
             this.Controls.Add(this.splitMain);
             this.Controls.Add(this.ribbonControl1);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Form1";
             this.Ribbon = this.ribbonControl1;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).EndInit();

@@ -76,6 +76,7 @@ namespace TotalCommandder
                     Directory.Delete(copyPath, true);
                 else
                     File.Delete(copyPath);
+                this.copyPath = "";
             }
             if (this.refresh1 != null)
                 this.refresh1();

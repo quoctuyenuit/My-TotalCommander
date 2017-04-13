@@ -9,3 +9,14 @@ c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCo
 c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.exe
 c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.pdb
 c:\users\quoctuyen\documents\visual studio 2013\Projects\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.NewFolderForm.resources
+C:\Users\QuocTuyen\Documents\MyTotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.exe
+C:\Users\QuocTuyen\Documents\MyTotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.pdb
+C:\Users\QuocTuyen\Documents\MyTotalCommander\TotalCommandder\TotalCommandder\bin\Debug\TotalCommandder.exe
+C:\Users\QuocTuyen\Documents\MyTotalCommander\TotalCommandder\TotalCommandder\bin\Debug\TotalCommandder.pdb
+C:\Users\QuocTuyen\Documents\MyTotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.csprojResolveAssemblyReference.cache
+C:\Users\QuocTuyen\Documents\MyTotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.Form1.resources
+C:\Users\QuocTuyen\Documents\MyTotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.GUI.uc_DirectoryList.resources
+C:\Users\QuocTuyen\Documents\MyTotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.NewFolderForm.resources
+C:\Users\QuocTuyen\Documents\MyTotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.Properties.Resources.resources
+C:\Users\QuocTuyen\Documents\MyTotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.csproj.GenerateResource.Cache
+C:\Users\QuocTuyen\Documents\MyTotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.exe.licenses

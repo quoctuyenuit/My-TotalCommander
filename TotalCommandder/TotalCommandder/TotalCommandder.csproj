@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BLL\ClassBLL.cs" />
+    <Compile Include="BLL\ShellIcon.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

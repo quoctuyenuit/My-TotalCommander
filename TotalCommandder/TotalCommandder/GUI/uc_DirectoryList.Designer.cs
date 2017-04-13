@@ -38,7 +38,9 @@
             this.splitUserControl = new System.Windows.Forms.SplitContainer();
             this.tvMain = new System.Windows.Forms.TreeView();
             this.lvMain = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuItemOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemCut = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemPaste = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,8 +105,9 @@
             this.cbPath.Properties.Appearance.Options.UseFont = true;
             this.cbPath.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.cbPath.Properties.QueryCloseUp += new System.ComponentModel.CancelEventHandler(this.cbPath_Properties_QueryCloseUp);
             this.cbPath.Size = new System.Drawing.Size(1038, 24);
-            this.cbPath.TabIndex = 1;
+            this.cbPath.TabIndex = 0;
             // 
             // splitUserControl
             // 
@@ -133,6 +136,8 @@
             // 
             // lvMain
             // 
+            this.lvMain.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
             this.lvMain.ContextMenuStrip = this.contextMenu;
             this.lvMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvMain.LargeImageList = this.imList;
@@ -140,26 +145,41 @@
             this.lvMain.Name = "lvMain";
             this.lvMain.Size = new System.Drawing.Size(823, 594);
             this.lvMain.SmallImageList = this.imList;
+            this.lvMain.StateImageList = this.imList;
             this.lvMain.TabIndex = 0;
+            this.lvMain.TileSize = new System.Drawing.Size(278, 54);
             this.lvMain.UseCompatibleStateImageBehavior = false;
             this.lvMain.View = System.Windows.Forms.View.Tile;
+            this.lvMain.VirtualListSize = 278;
             this.lvMain.DoubleClick += new System.EventHandler(this.lvMain_DoubleClick);
+            this.lvMain.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.lvMain_KeyPress);
             // 
             // contextMenu
             // 
             this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItemOpen,
             this.menuItemCopy,
             this.menuItemCut,
             this.menuItemPaste,
             this.menuItemDelete,
             this.menuItemNewFolder});
             this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(214, 162);
+            this.contextMenu.Size = new System.Drawing.Size(214, 160);
             this.contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenu_Opening);
+            // 
+            // menuItemOpen
+            // 
+            this.menuItemOpen.Enabled = false;
+            this.menuItemOpen.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.menuItemOpen.Name = "menuItemOpen";
+            this.menuItemOpen.Size = new System.Drawing.Size(213, 26);
+            this.menuItemOpen.Text = "Open";
+            this.menuItemOpen.Click += new System.EventHandler(this.menuItemOpen_Click);
             // 
             // menuItemCopy
             // 
+            this.menuItemCopy.Enabled = false;
             this.menuItemCopy.Name = "menuItemCopy";
             this.menuItemCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
             this.menuItemCopy.Size = new System.Drawing.Size(213, 26);
@@ -168,6 +188,7 @@
             // 
             // menuItemCut
             // 
+            this.menuItemCut.Enabled = false;
             this.menuItemCut.Name = "menuItemCut";
             this.menuItemCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.menuItemCut.Size = new System.Drawing.Size(213, 26);
@@ -176,6 +197,7 @@
             // 
             // menuItemPaste
             // 
+            this.menuItemPaste.Enabled = false;
             this.menuItemPaste.Name = "menuItemPaste";
             this.menuItemPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
             this.menuItemPaste.Size = new System.Drawing.Size(213, 26);
@@ -184,6 +206,7 @@
             // 
             // menuItemDelete
             // 
+            this.menuItemDelete.Enabled = false;
             this.menuItemDelete.Name = "menuItemDelete";
             this.menuItemDelete.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.menuItemDelete.Size = new System.Drawing.Size(213, 26);
@@ -202,9 +225,7 @@
             // 
             this.imList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imList.ImageStream")));
             this.imList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imList.Images.SetKeyName(0, "driveIcon.png");
-            this.imList.Images.SetKeyName(1, "folderIcon.png");
-            this.imList.Images.SetKeyName(2, "documentIcon.png");
+            this.imList.Images.SetKeyName(0, "folderIcon.png");
             // 
             // uc_DirectoryList
             // 
@@ -245,5 +266,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuItemPaste;
         private System.Windows.Forms.ToolStripMenuItem menuItemNewFolder;
         private System.Windows.Forms.ToolStripMenuItem menuItemDelete;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ToolStripMenuItem menuItemOpen;
     }
 }
