@@ -106,6 +106,7 @@
             this.cbPath.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.cbPath.Properties.QueryCloseUp += new System.ComponentModel.CancelEventHandler(this.cbPath_Properties_QueryCloseUp);
+            this.cbPath.Properties.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cbPath_Properties_KeyPress);
             this.cbPath.Size = new System.Drawing.Size(1038, 24);
             this.cbPath.TabIndex = 0;
             // 
@@ -136,6 +137,7 @@
             // 
             // lvMain
             // 
+            this.lvMain.AllowDrop = true;
             this.lvMain.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
             this.lvMain.ContextMenuStrip = this.contextMenu;
@@ -151,8 +153,13 @@
             this.lvMain.UseCompatibleStateImageBehavior = false;
             this.lvMain.View = System.Windows.Forms.View.Tile;
             this.lvMain.VirtualListSize = 278;
+            this.lvMain.SelectedIndexChanged += new System.EventHandler(this.lvMain_SelectedIndexChanged);
+            this.lvMain.DragDrop += new System.Windows.Forms.DragEventHandler(this.lvMain_DragDrop);
+            this.lvMain.DragEnter += new System.Windows.Forms.DragEventHandler(this.lvMain_DragEnter);
+            this.lvMain.DragLeave += new System.EventHandler(this.lvMain_DragLeave);
             this.lvMain.DoubleClick += new System.EventHandler(this.lvMain_DoubleClick);
             this.lvMain.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.lvMain_KeyPress);
+            this.lvMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lvMain_MouseDown);
             // 
             // contextMenu
             // 
@@ -237,6 +244,7 @@
             this.Name = "uc_DirectoryList";
             this.Size = new System.Drawing.Size(1038, 656);
             this.Load += new System.EventHandler(this.uc_DirectoryList_Load);
+            this.Leave += new System.EventHandler(this.uc_DirectoryList_Leave);
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cbPath.Properties)).EndInit();
             this.splitUserControl.Panel1.ResumeLayout(false);
@@ -260,13 +268,13 @@
         private System.Windows.Forms.TreeView tvMain;
         private System.Windows.Forms.ListView lvMain;
         private System.Windows.Forms.ImageList imList;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
+        private System.Windows.Forms.ToolStripMenuItem menuItemOpen;
         private System.Windows.Forms.ToolStripMenuItem menuItemCopy;
         private System.Windows.Forms.ToolStripMenuItem menuItemCut;
         private System.Windows.Forms.ToolStripMenuItem menuItemPaste;
-        private System.Windows.Forms.ToolStripMenuItem menuItemNewFolder;
         private System.Windows.Forms.ToolStripMenuItem menuItemDelete;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ToolStripMenuItem menuItemOpen;
+        private System.Windows.Forms.ToolStripMenuItem menuItemNewFolder;
     }
 }

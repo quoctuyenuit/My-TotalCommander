@@ -15,11 +15,11 @@ namespace TotalCommandder.GUI
     {
         Stack<string> listBack;
 
-        public delegate string DgetCopyPath();
+        public delegate int DgetCountCopyPath();
 
-        public DgetCopyPath getCopyPath;
+        public DgetCountCopyPath getCountCopyPath;
 
-        public delegate void DgetCopyAction(string path, bool isCopy);
+        public delegate void DgetCopyAction(List<string> listPath, bool isCopy);
 
         public DgetCopyAction getCopyAction;
 
@@ -31,11 +31,19 @@ namespace TotalCommandder.GUI
 
         public DgetRefreshAction getRefreshAction;
 
-        public uc_DirectoryList()
+        public delegate ContextMenuStrip DgetContextMenu();
+
+        public DgetContextMenu getContextMenu;//delegate lấy contextMenu từ hàm form cha
+
+        public delegate void DpushContextMenuForParent(ContextMenuStrip contextMenu);
+
+        public DpushContextMenuForParent pushContextMenuForParent;//delegate đẩy contextMenu về cho hàm form1 cha
+
+        public uc_DirectoryList(ContextMenuStrip contextMenu)
         {
             InitializeComponent();
             listBack = new Stack<string>();
-
+            this.contextMenu = contextMenu;
         }
 
         void refreshScreen()
@@ -67,6 +75,7 @@ namespace TotalCommandder.GUI
         //======================================================================================================================================
         //======================================================================================================================================
         //Show Directory and files
+
         private void showDrives()
         {
             DriveInfo[] drives = DriveInfo.GetDrives();
@@ -97,42 +106,62 @@ namespace TotalCommandder.GUI
             }
         }
 
+        private Bitmap showImageAsThumbnailView(string path)
+        {
+            Bitmap bmp = new Bitmap(128, 128);
+
+            Graphics g = Graphics.FromImage(bmp);
+
+            g.DrawImage(Image.FromFile(path), 0, 0, 128, 128);
+
+            return bmp;
+        }
+
         private void showFiles(string path)
         {
             FileInfo[] files = new DirectoryInfo(path).GetFiles();
+
             foreach (FileInfo f in files)
             {
                 string[] temp = f.Attributes.ToString().Split(',');
+
                 if (temp.Contains("Hidden") || temp.Contains(" Hidden"))
                     continue;
 
-                imList.Images.Add(BLL.ShellIcon.GetLargeIconFromExtension(f.FullName).ToBitmap());
+                string extension = f.Extension;
+
+                Bitmap bmp;
+
+                extension = extension.ToLower();
+
+                if (extension.Equals(".bmp") || extension.Equals(".ico") || extension.Equals(".gif") || extension.Equals(".jpeg") || extension.Equals(".jpg") || extension.Equals(".jfif") || extension.Equals(".png") || extension.Equals(".tif") || extension.Equals(".tiff") || extension.Equals(".wmf") || extension.Equals(".emf"))
+                    bmp = showImageAsThumbnailView(path + "\\" + f.Name);
+                else
+                    bmp = BLL.ShellIcon.GetLargeIconFromExtension(f.FullName).ToBitmap();
+
+                imList.Images.Add(bmp);
 
                 ListViewItem item = new ListViewItem(f.Name, imList.Images.Count - 1);
+
                 lvMain.Items.Add(item);
             }
         }
 
         private string showDirectoryAndFiles(string path)//Hiển thị các thư mục và các file hiện tại, hàm trả về đường dẫn mới
         {
-            try
+            if (path.Equals("This PC"))
             {
-                if (path.Equals("This PC"))
-                {
-                    showDrives();
-                    return path;
-                }
-
-                showDirectory(path);
-
-                showFiles(path);
+                showDrives();
+                return path;
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+
+            showDirectory(path);
+
+            showFiles(path);
+            
             return path;
         }
+
         //======================================================================================================================================
         //======================================================================================================================================
         //======================================================================================================================================
@@ -228,9 +257,9 @@ namespace TotalCommandder.GUI
 
         private void contextMenu_Opening(object sender, CancelEventArgs e)
         {
-            if (getCopyPath != null)
+            if (getCountCopyPath != null)
             {
-                if (string.IsNullOrEmpty(getCopyPath()))
+                if (getCountCopyPath() == 0)
                     menuItemPaste.Enabled = false;
                 else
                     menuItemPaste.Enabled = true;
@@ -259,7 +288,14 @@ namespace TotalCommandder.GUI
             try
             {
                 if (getCopyAction != null)
-                    getCopyAction(cbPath.Text + lvMain.FocusedItem.Text, true);
+                {
+                    List<string> listPathCopy = new List<string>();
+
+                    foreach (ListViewItem item in lvMain.Items)
+                        if (item.Selected)
+                            listPathCopy.Add(cbPath.Text + @"\" + item.Text);
+                    getCopyAction(listPathCopy, true);
+                }
 
                 menuItemPaste.Enabled = true;
             }
@@ -271,7 +307,14 @@ namespace TotalCommandder.GUI
             try
             {
                 if (getCopyAction != null)
-                    getCopyAction(cbPath.Text + lvMain.FocusedItem.Text, false);
+                {
+                    List<string> listPathCopy = new List<string>();
+
+                    foreach (ListViewItem item in lvMain.Items)
+                        if (item.Selected)
+                            listPathCopy.Add(cbPath.Text + item.Text);
+                    getCopyAction(listPathCopy, false);
+                }
 
                 menuItemPaste.Enabled = true;
             }
@@ -362,20 +405,98 @@ namespace TotalCommandder.GUI
 
                 lvMain.Clear();
 
-                this.Cursor = Cursors.AppStarting;
-
-                if (cbPath.Text.Equals("This PC"))
-                {
-                    showDrives();
-                    return;
-                }
-
-                showDirectory(cbPath.Text);
-
-                showFiles(cbPath.Text);
+                showDirectoryAndFiles(cbPath.Text);
             }
             catch (Exception ex)
-            { }
+            {
+                btnBack_ItemClick(null, null);
+                MessageBox.Show("The path is not exists!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
+
+        private void lvMain_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lvMain.Items)
+                if (item.Selected)
+                {
+                    menuItemOpen.Enabled = true;
+                    menuItemCopy.Enabled = true;
+                    menuItemCut.Enabled = true;
+                    menuItemDelete.Enabled = true;
+                    return;
+                }
+            menuItemOpen.Enabled = false;
+            menuItemCopy.Enabled = false;
+            menuItemCut.Enabled = false;
+            menuItemDelete.Enabled = false;
+        }
+
+        private void cbPath_Properties_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                if (Directory.Exists(cbPath.Text))
+                    cbPath_Properties_QueryCloseUp(null, null);
+                else
+                {
+                    cbPath.Text = this.listBack.Peek();
+                    MessageBox.Show("The path is not exists!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+        }
+        //======================================================================================================================================
+        //======================================================================================================================================
+        //======================================================================================================================================
+        //Get and set contextMenu
+
+        private void setContextMenu()//Thay đổi giá trị item của contextMenu tương ứng với các item bên ngoài
+        {
+            this.contextMenu.Items[0].Enabled = menuItemOpen.Enabled;
+            this.contextMenu.Items[1].Enabled = menuItemCopy.Enabled;
+            this.contextMenu.Items[2].Enabled = menuItemCut.Enabled;
+            this.contextMenu.Items[3].Enabled = menuItemPaste.Enabled;
+        }
+
+        private void setItemOfContextMenu()//Thay đổi giá trị của các item trong contextMenu
+        {
+            menuItemOpen.Enabled = this.contextMenu.Items[0].Enabled;
+            menuItemCopy.Enabled = this.contextMenu.Items[1].Enabled;
+            menuItemCut.Enabled = this.contextMenu.Items[2].Enabled;
+            menuItemPaste.Enabled = this.contextMenu.Items[3].Enabled;
+        }
+
+        private void lvMain_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (getContextMenu != null)
+                this.contextMenu = getContextMenu();
+            setItemOfContextMenu();
+        }
+
+        private void uc_DirectoryList_Leave(object sender, EventArgs e)
+        {
+            setContextMenu();
+            if (pushContextMenuForParent != null)
+                pushContextMenuForParent(this.contextMenu);
+        }
+
+        private void lvMain_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+            // MessageBox.Show("abc");
+        }
+
+        private void lvMain_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            foreach (string file in files)
+                MessageBox.Show(file);
+        }
+
+        private void lvMain_DragLeave(object sender, EventArgs e)
+        {
+            MessageBox.Show(e.ToString());
+        }
+
+        
     }
 }

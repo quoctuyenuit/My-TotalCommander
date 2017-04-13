@@ -27,7 +27,7 @@ namespace TotalCommandder.BLL
             if (File.Exists(sourcePath))
             {
                 FileInfo f = new FileInfo(sourcePath);
-                f.CopyTo(destinationPath + f.Name);
+                f.CopyTo(destinationPath + @"\"+ f.Name);
                 return;
             }
 
