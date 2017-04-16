@@ -17,14 +17,32 @@ namespace TotalCommandder
         public Drefresh refresh1;
         public Drefresh refresh2;
 
+        //Lấy sự kiện refresh listview ở giao diện con 2
         void getRefreshAction1(Drefresh refresh)
         {
             this.refresh1 = refresh;
         }
 
+        //Lấy sự kiện refresh listview ở giao diện con 1
         void getRefreshAction2(Drefresh refresh)
         {
             this.refresh2 = refresh;
+        }
+
+        private GUI.uc_DirectoryList gui1;
+
+        private GUI.uc_DirectoryList gui2;
+
+        public GUI.uc_DirectoryList Gui2
+        {
+            get { return gui2; }
+            set { gui2 = value; }
+        }
+
+        public GUI.uc_DirectoryList Gui1
+        {
+            get { return gui1; }
+            set { gui1 = value; }
         }
 
         public Form1()
@@ -32,33 +50,38 @@ namespace TotalCommandder
             InitializeComponent();
 
             this.listCopyPath = new List<string>();
+
+            //Set Skin for form
+            DevExpress.Skins.SkinManager.EnableFormSkins();
+            DevExpress.LookAndFeel.UserLookAndFeel.Default.SkinName = "Office 2010 Blue";
+
         }
 
-        private List<string> listCopyPath{get; set;}
+        private List<string> listCopyPath { get; set; }
 
-        private bool isCopy{get; set;}
+        private bool isCopy { get; set; }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            GUI.uc_DirectoryList uc1 =new GUI.uc_DirectoryList(contextMenu);
-            uc1.Dock = DockStyle.Fill;
-            uc1.getCopyAction = new GUI.uc_DirectoryList.DgetCopyAction(copyAction);
-            uc1.getCountCopyPath = new GUI.uc_DirectoryList.DgetCountCopyPath(getCountCopyPath);
-            uc1.getPasteAction = new GUI.uc_DirectoryList.DgetPasteAction(getPasteAction);
-            uc1.getRefreshAction = new GUI.uc_DirectoryList.DgetRefreshAction(getRefreshAction1);
-            uc1.getContextMenu = new GUI.uc_DirectoryList.DgetContextMenu(pushContextMenu);
-            uc1.pushContextMenuForParent = new GUI.uc_DirectoryList.DpushContextMenuForParent(setContextMenu);
-            splitMain.Panel1.Controls.Add(uc1);
+            this.gui1 = new GUI.uc_DirectoryList(contextMenu);
+            gui1.Dock = DockStyle.Fill;
+            gui1.getCopyAction = new GUI.uc_DirectoryList.DgetCopyAction(copyAction);
+            gui1.getCopyPath = new GUI.uc_DirectoryList.DgetCopyPath(pushCopyPath);
+            gui1.getPasteAction = new GUI.uc_DirectoryList.DgetPasteAction(pasteAction);
+            gui1.getRefreshAction = new GUI.uc_DirectoryList.DgetRefreshAction(getRefreshAction1);
+            gui1.getContextMenu = new GUI.uc_DirectoryList.DgetContextMenu(pushContextMenu);
+            gui1.pushContextMenuForParent = new GUI.uc_DirectoryList.DpushContextMenuForParent(setContextMenu);
+            splitMain.Panel1.Controls.Add(gui1);
             //------------------------------------------------------------------------------------
-            GUI.uc_DirectoryList uc2 = new GUI.uc_DirectoryList(contextMenu);
-            uc2.Dock = DockStyle.Fill;
-            uc2.getCopyAction = new GUI.uc_DirectoryList.DgetCopyAction(copyAction);
-            uc2.getCountCopyPath = new GUI.uc_DirectoryList.DgetCountCopyPath(getCountCopyPath);
-            uc2.getPasteAction = new GUI.uc_DirectoryList.DgetPasteAction(getPasteAction);
-            uc2.getRefreshAction = new GUI.uc_DirectoryList.DgetRefreshAction(getRefreshAction2);
-            uc2.getContextMenu = new GUI.uc_DirectoryList.DgetContextMenu(pushContextMenu);
-            uc2.pushContextMenuForParent = new GUI.uc_DirectoryList.DpushContextMenuForParent(setContextMenu);
-            splitMain.Panel2.Controls.Add(uc2);
+            this.gui2 = new GUI.uc_DirectoryList(contextMenu);
+            gui2.Dock = DockStyle.Fill;
+            gui2.getCopyAction = new GUI.uc_DirectoryList.DgetCopyAction(copyAction);
+            gui2.getCopyPath = new GUI.uc_DirectoryList.DgetCopyPath(pushCopyPath);
+            gui2.getPasteAction = new GUI.uc_DirectoryList.DgetPasteAction(pasteAction);
+            gui2.getRefreshAction = new GUI.uc_DirectoryList.DgetRefreshAction(getRefreshAction2);
+            gui2.getContextMenu = new GUI.uc_DirectoryList.DgetContextMenu(pushContextMenu);
+            gui2.pushContextMenuForParent = new GUI.uc_DirectoryList.DpushContextMenuForParent(setContextMenu);
+            splitMain.Panel2.Controls.Add(gui2);
         }
 
         private void copyAction(List<string> listPath, bool isCopy)
@@ -70,15 +93,18 @@ namespace TotalCommandder
             this.listCopyPath = listPath;
         }
 
-        public int getCountCopyPath()
+        //Đẩy đường dẫn cần copy(ListCopyPath) cho giao diện con
+        public List<string> pushCopyPath()
         {
-            return this.listCopyPath.Count;
+            return this.listCopyPath;
         }
 
-        public void getPasteAction(string pastePath)
+        //Xử lý khi người dùng paste
+        public void pasteAction(string pastePath)
         {
-            foreach(string path in this.listCopyPath)
-                BLL.ClassBLL.Instances.copyDirectory(path, pastePath);
+            foreach (string path in this.listCopyPath)
+                if (!BLL.ClassBLL.Instances.copyDirectory(path, pastePath))
+                    return;
 
             if (!isCopy)//Nếu là chức năng Cut thì xóa bản cũ
             {
@@ -92,6 +118,7 @@ namespace TotalCommandder
 
                 this.listCopyPath.Clear();
             }
+
             if (this.refresh1 != null)
                 this.refresh1();
             if (this.refresh2 != null)
@@ -106,15 +133,92 @@ namespace TotalCommandder
             this.contextMenu.Items[3].Enabled = menuItemPaste.Enabled;
         }
 
+        //Đẩy contextMenu cho giao diện con
         public ContextMenuStrip pushContextMenu()
         {
             setContextMenu();
             return this.contextMenu;
         }
 
+        //Lấy contextMenu từ giao diện con
         public void setContextMenu(ContextMenuStrip contextMenu)
         {
             this.contextMenu = contextMenu;
         }
+
+        #region Button Events
+
+        private void btnPack_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            Packing.PackingForm packingForm = new Packing.PackingForm();
+            packingForm.ShowDialog();
+
+            if (packingForm.isSuccessful)
+            {
+
+                string pathReturn = packingForm.filePath;
+
+                this.gui1.CbPath.Text = pathReturn.Remove(pathReturn.LastIndexOf('\\'));
+
+                #region LoadListView
+                try
+                {
+                    this.gui1.ListBack.Push(this.gui1.CbPath.Text);
+
+                    this.gui1.LvMain.Clear();
+
+                    this.gui1.showDirectoryAndFiles(this.gui1.CbPath.Text);
+                }
+                catch (Exception ex)
+                {
+                    this.gui1.btnBack_ItemClick(null, null);
+                    MessageBox.Show("The path is not exists!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                #endregion
+
+                this.gui1.LvMain.Focus();
+                ListViewItem item = this.gui1.LvMain.Items[pathReturn.Substring(pathReturn.LastIndexOf('\\') + 1)];
+                item.Selected = true;
+                item.Focused = true;
+            }
+
+        }
+
+        private void btnUnPack_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            Packing.UnPacking unpackingForm = new Packing.UnPacking();
+            unpackingForm.ShowDialog();
+
+            if (unpackingForm.isSuccessful)
+            {
+
+                string pathReturn = unpackingForm.pathFolder;
+
+                this.gui1.CbPath.Text = pathReturn.Remove(pathReturn.LastIndexOf('\\'));
+
+                #region LoadListView
+                try
+                {
+                    this.gui1.ListBack.Push(this.gui1.CbPath.Text);
+
+                    this.gui1.LvMain.Clear();
+
+                    this.gui1.showDirectoryAndFiles(this.gui1.CbPath.Text);
+                }
+                catch (Exception ex)
+                {
+                    this.gui1.btnBack_ItemClick(null, null);
+                    MessageBox.Show("The path is not exists!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                #endregion
+
+                this.gui1.LvMain.Focus();
+                ListViewItem item = this.gui1.LvMain.Items[pathReturn.Substring(pathReturn.LastIndexOf('\\') + 1)];
+                item.Selected = true;
+                item.Focused = true;
+            }
+
+        }
+        #endregion
     }
 }

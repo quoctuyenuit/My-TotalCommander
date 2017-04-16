@@ -15,9 +15,17 @@ namespace TotalCommandder.GUI
     {
         Stack<string> listBack;
 
-        public delegate int DgetCountCopyPath();
+        public Stack<string> ListBack
+        {
+            get { return listBack; }
+            set { listBack = value; }
+        }
 
-        public DgetCountCopyPath getCountCopyPath;
+        Stack<string> listForward;
+
+        public delegate List<string> DgetCopyPath();
+
+        public DgetCopyPath getCopyPath;
 
         public delegate void DgetCopyAction(List<string> listPath, bool isCopy);
 
@@ -39,12 +47,24 @@ namespace TotalCommandder.GUI
 
         public DpushContextMenuForParent pushContextMenuForParent;//delegate đẩy contextMenu về cho hàm form1 cha
 
+        private string oldNameItem;
+
+        //public delegate void DgetLoadViewDelegate(Form1.DloadListView loadListView);
+
+        ////public DgetLoadViewDelegate getLoadView
+
         public uc_DirectoryList(ContextMenuStrip contextMenu)
         {
             InitializeComponent();
-            listBack = new Stack<string>();
+            this.listBack = new Stack<string>();
+
+            this.listForward = new Stack<string>();
+
             this.contextMenu = contextMenu;
+
+            BLL.MyTreeView.Instances.initTreeView(tvMain);
         }
+
 
         void refreshScreen()
         {
@@ -56,12 +76,6 @@ namespace TotalCommandder.GUI
         //======================================================================================================================================
         //======================================================================================================================================
         //Initialy
-
-        private void initTreeView()
-        {
-
-        }
-
         private void uc_DirectoryList_Load(object sender, EventArgs e)
         {
             showDrives();
@@ -75,156 +89,102 @@ namespace TotalCommandder.GUI
         //======================================================================================================================================
         //======================================================================================================================================
         //Show Directory and files
+        #region Show Directory And Files
 
         private void showDrives()
         {
             DriveInfo[] drives = DriveInfo.GetDrives();
             foreach (DriveInfo drive in drives)
-            {
-                string name = ((string.IsNullOrEmpty(drive.VolumeLabel)) ? "Local Drive" : drive.VolumeLabel) + " (" + drive.Name + ")";
-
-                imList.Images.Add(BLL.ShellIcon.GetLargeIconFromExtension(drive.Name).ToBitmap());
-                ListViewItem item = new ListViewItem(name, imList.Images.Count - 1);
-
-                lvMain.Items.Add(item);
-            }
-
+                BLL.ClassBLL.Instances.showDrive(drive, lvMain);
         }
 
-        private void showDirectory(string path)
+        private void showDirectories(string path)
         {
             DirectoryInfo[] directories = new DirectoryInfo(path).GetDirectories();
             foreach (DirectoryInfo direc in directories)
             {
-                string[] temp = direc.Attributes.ToString().Split(',');
-                if (temp.Contains("Hidden") || temp.Contains(" Hidden"))
-                    continue;
-
-                imList.Images.Add(BLL.ShellIcon.GetLargeFolderIcon().ToBitmap());
-
-                lvMain.Items.Add(new ListViewItem(direc.Name, imList.Images.Count - 1));
+                if ((direc.Attributes | FileAttributes.Hidden) != direc.Attributes)//Chỉ hiển thị những file không ẩn
+                    BLL.ClassBLL.Instances.showDirectory(direc, lvMain);
             }
-        }
-
-        private Bitmap showImageAsThumbnailView(string path)
-        {
-            Bitmap bmp = new Bitmap(128, 128);
-
-            Graphics g = Graphics.FromImage(bmp);
-
-            g.DrawImage(Image.FromFile(path), 0, 0, 128, 128);
-
-            return bmp;
         }
 
         private void showFiles(string path)
         {
             FileInfo[] files = new DirectoryInfo(path).GetFiles();
 
-            foreach (FileInfo f in files)
+            foreach (FileInfo file in files)
             {
-                string[] temp = f.Attributes.ToString().Split(',');
-
-                if (temp.Contains("Hidden") || temp.Contains(" Hidden"))
-                    continue;
-
-                string extension = f.Extension;
-
-                Bitmap bmp;
-
-                extension = extension.ToLower();
-
-                if (extension.Equals(".bmp") || extension.Equals(".ico") || extension.Equals(".gif") || extension.Equals(".jpeg") || extension.Equals(".jpg") || extension.Equals(".jfif") || extension.Equals(".png") || extension.Equals(".tif") || extension.Equals(".tiff") || extension.Equals(".wmf") || extension.Equals(".emf"))
-                    bmp = showImageAsThumbnailView(path + "\\" + f.Name);
-                else
-                    bmp = BLL.ShellIcon.GetLargeIconFromExtension(f.FullName).ToBitmap();
-
-                imList.Images.Add(bmp);
-
-                ListViewItem item = new ListViewItem(f.Name, imList.Images.Count - 1);
-
-                lvMain.Items.Add(item);
+                if ((file.Attributes | FileAttributes.Hidden) != file.Attributes)//Chỉ hiển thị những file không ẩn
+                    BLL.ClassBLL.Instances.showFile(file, lvMain);
             }
         }
 
-        private string showDirectoryAndFiles(string path)//Hiển thị các thư mục và các file hiện tại, hàm trả về đường dẫn mới
+        public void showDirectoryAndFiles(string path)//Hiển thị các thư mục và các file hiện tại, hàm trả về đường dẫn mới
         {
+            lvMain.LargeImageList.Images.Clear();
+            lvMain.SmallImageList.Images.Clear();
+            lvMain.StateImageList.Images.Clear();
+
             if (path.Equals("This PC"))
             {
                 showDrives();
-                return path;
+                return;
             }
 
-            showDirectory(path);
+            showDirectories(path);
 
             showFiles(path);
-            
-            return path;
         }
-
+        #endregion
         //======================================================================================================================================
         //======================================================================================================================================
         //======================================================================================================================================
         //Click
-
+        #region EventClick
         private void lvMain_DoubleClick(object sender, EventArgs e)
         {
             try
             {
-                if (File.Exists(cbPath.Text + @"\" + lvMain.FocusedItem.Text))
+                string path = lvMain.SelectedItems[0].Tag.ToString();
+
+                if (File.Exists(path))
                 {
-                    System.Diagnostics.Process.Start(cbPath.Text + @"\" + lvMain.FocusedItem.Text);
+                    System.Diagnostics.Process.Start(path);
                     return;
                 }
 
-                string lvOnFocus = lvMain.FocusedItem.Text;
-
-                if (lvOnFocus.Contains(':'))
-                {
-                    int indexStart = lvOnFocus.LastIndexOf('(') + 1;
-                    int indexEnd = lvOnFocus.LastIndexOf(')');
-                    char[] array = new char[indexEnd - indexStart];
-                    lvOnFocus.CopyTo(indexStart, array, 0, indexEnd - indexStart);
-                    lvOnFocus = string.Concat(array);
-                }
-
-                if (!this.listBack.Peek().Equals("This PC"))
-                    this.listBack.Push(this.listBack.Peek() + @"\" + lvOnFocus);
-                else
-                    this.listBack.Push(lvOnFocus);
-
+                this.listBack.Push(path);
 
                 lvMain.Clear();
 
                 this.Cursor = Cursors.AppStarting;
 
-                string path = showDirectoryAndFiles(this.listBack.Peek());
+                showDirectoryAndFiles(this.listBack.Peek());
 
                 this.Cursor = Cursors.Arrow;
 
+                cbPath.Text = path;
+
                 cbPath.Properties.Items.Add(path);
 
-                if (string.IsNullOrEmpty(path))
-                {
-                    cbPath.Properties.Items.Clear();
-                    cbPath.Text = "This PC";
-                    cbPath.Properties.Items.Add("This PC");
-                }
-                else
-                    cbPath.Text = path;
+                btnBack.Enabled = true;//Bật back
+
+                btnForward.Enabled = false;//Tắt forward
+
+                this.listForward.Clear();//Xóa ngăn xếp forward
             }
             catch (Exception ex)
             { }
         }
 
-        private void btnBack_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        public void btnBack_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             try
             {
-                if (this.listBack.Count == 1)//Nếu trong stack chỉ có một phần tử đó là This PC thì không cho back nữa
-                    return;
+                //if (this.listBack.Count == 1)//Nếu trong stack chỉ có một phần tử đó là This PC thì không cho back nữa
+                //    return;
 
-                listBack.Pop();//Xóa đi thư mục vừa mới thoát ra
+                this.listForward.Push(listBack.Pop());//Xóa đi thư mục vừa mới thoát ra đồng thời lưu hoạt động đó vào Forward
 
                 if (cbPath.SelectedIndex >= 0)
                     cbPath.Properties.Items.RemoveAt(cbPath.SelectedIndex);//Xóa đường dẫn vừa mới thoát ra khỏi combobox
@@ -233,7 +193,9 @@ namespace TotalCommandder.GUI
 
                 this.Cursor = Cursors.AppStarting;
 
-                string path = showDirectoryAndFiles(this.listBack.Peek());
+                string path = this.listBack.Peek();
+
+                showDirectoryAndFiles(path);
 
                 this.Cursor = Cursors.Arrow;
 
@@ -245,41 +207,113 @@ namespace TotalCommandder.GUI
                 }
                 else
                     cbPath.Text = path;
+
+                if (this.listBack.Count == 1)//Nếu stack chỉ còn phần tử This PC thì không cho back nữa
+                    btnBack.Enabled = false;
+
+                btnForward.Enabled = true;//Bật forward
             }
             catch (Exception ex)
             { }
         }
 
+        private void btnForward_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+
+            //Xóa đi thư mục vừa mới thoát ra trong Forward đồng thời lưu vào combobox
+            string pathForward = listForward.Pop();
+
+            this.listBack.Push(pathForward);
+
+            lvMain.Clear();
+
+            this.Cursor = Cursors.AppStarting;
+
+            showDirectoryAndFiles(pathForward);
+
+            this.Cursor = Cursors.Arrow;
+
+            cbPath.Text = pathForward;
+
+            cbPath.Properties.Items.Add(pathForward);
+
+            if (this.listForward.Count == 0)//Nếu hết phần tử trong forward thì tắt forward
+                btnForward.Enabled = false;
+
+            btnBack.Enabled = true;//Bật back
+        }
+
+        private void btnUpTo_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            try
+            {
+                string path;
+
+                if (cbPath.Text.Equals("This PC"))
+                    path = tvMain.TopNode.Tag.ToString();
+                else
+                {
+                    DirectoryInfo direc = new DirectoryInfo(cbPath.Text).Parent;
+                    path = (direc != null) ? direc.FullName : "This PC";
+                }
+
+                this.listBack.Push(path);
+
+                lvMain.Clear();
+
+                this.Cursor = Cursors.AppStarting;
+
+                showDirectoryAndFiles(this.listBack.Peek());
+
+                this.Cursor = Cursors.Arrow;
+
+                cbPath.Text = path;
+
+                cbPath.Properties.Items.Add(path);
+
+                btnBack.Enabled = true;
+
+                btnForward.Enabled = false;
+
+                this.listForward.Clear();
+            }
+            catch (Exception ex)
+            { }
+        }
+        #endregion
         //======================================================================================================================================
         //======================================================================================================================================
         //======================================================================================================================================
         //Menu
-
+        #region InitContextMenu
         private void contextMenu_Opening(object sender, CancelEventArgs e)
         {
-            if (getCountCopyPath != null)
+            if (getCopyPath != null)
             {
-                if (getCountCopyPath() == 0)
+                if (getCopyPath().Count == 0)
                     menuItemPaste.Enabled = false;
                 else
                     menuItemPaste.Enabled = true;
 
                 menuItemOpen.Enabled = false;
+                menuItemPack.Enabled = false;
+                menuItemUnpack.Enabled = false;
                 menuItemCopy.Enabled = false;
                 menuItemCut.Enabled = false;
                 menuItemDelete.Enabled = false;
 
-                foreach (ListViewItem item in lvMain.Items)
-                    if (item.Selected)
+                if (lvMain.SelectedItems.Count > 0)
+                {
+                    menuItemOpen.Enabled = true;
+                    if (!cbPath.Text.Equals("This PC"))
                     {
-                        menuItemOpen.Enabled = true;
-                        if (!cbPath.Text.Equals("This PC"))
-                        {
-                            menuItemCopy.Enabled = true;
-                            menuItemCut.Enabled = true;
-                            menuItemDelete.Enabled = true;
-                        }
+                        menuItemPack.Enabled = true;
+                        menuItemUnpack.Enabled = true;
+                        menuItemCopy.Enabled = true;
+                        menuItemCut.Enabled = true;
+                        menuItemDelete.Enabled = true;
                     }
+                }
             }
         }
 
@@ -291,9 +325,8 @@ namespace TotalCommandder.GUI
                 {
                     List<string> listPathCopy = new List<string>();
 
-                    foreach (ListViewItem item in lvMain.Items)
-                        if (item.Selected)
-                            listPathCopy.Add(cbPath.Text + @"\" + item.Text);
+                    foreach (ListViewItem item in lvMain.SelectedItems)
+                        listPathCopy.Add(cbPath.Text + @"\" + item.Text);
                     getCopyAction(listPathCopy, true);
                 }
 
@@ -310,9 +343,8 @@ namespace TotalCommandder.GUI
                 {
                     List<string> listPathCopy = new List<string>();
 
-                    foreach (ListViewItem item in lvMain.Items)
-                        if (item.Selected)
-                            listPathCopy.Add(cbPath.Text + item.Text);
+                    foreach (ListViewItem item in lvMain.SelectedItems)
+                        listPathCopy.Add(cbPath.Text + @"\" + item.Text);
                     getCopyAction(listPathCopy, false);
                 }
 
@@ -324,7 +356,13 @@ namespace TotalCommandder.GUI
         private void menuItemPaste_Click(object sender, EventArgs e)
         {
             if (getPasteAction != null)
+            {
+                if (!Directory.Exists(cbPath.Text))//Nếu pastePath không tồn tại thì thoát
+                    return;
+
                 getPasteAction(cbPath.Text);
+            }
+
 
             refreshScreen();
         }
@@ -333,44 +371,30 @@ namespace TotalCommandder.GUI
         {
             try
             {
-                string path = cbPath.Text + lvMain.FocusedItem.Text;
+                List<string> listPath = new List<string>();
 
-                if (Directory.Exists(path))
-                {
-                    if (MessageBox.Show("Do you want to delete folder " + new DirectoryInfo(path).Name + "?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
-                        return;
-                    Directory.Delete(path, true);
-                }
-                else
-                {
-                    if (MessageBox.Show("Do you want to delete file " + new FileInfo(path).Name + "?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
-                        return;
-                    File.Delete(path);
-                }
+                foreach (ListViewItem item in lvMain.SelectedItems)
+                    listPath.Add(item.Tag.ToString());
 
-                lvMain.Items.Remove(lvMain.FocusedItem);
+                if (BLL.ClassBLL.Instances.deleteSendToRecycleBin(listPath))
+                {
+                    foreach (ListViewItem item in lvMain.SelectedItems)
+                        lvMain.Items.RemoveByKey(item.Name);
+                }
 
                 menuItemDelete.Enabled = false;
             }
             catch (Exception ex) { }
         }
 
-        public delegate string DgetFolderName();
-
-        public DgetFolderName getFolderName;
-
-        public void getFolderNameAction(DgetFolderName getFolderName)
-        {
-            this.getFolderName = getFolderName;
-        }
-
         private void menuItemNewFolder_Click(object sender, EventArgs e)
         {
-            NewFolderForm frm = new NewFolderForm();
-            frm.getAction = new NewFolderForm.DgetAction(getFolderNameAction);
-            frm.ShowDialog();
-            if (getFolderName != null)
-                Directory.CreateDirectory(cbPath.Text + getFolderName());
+            GetNewFolderName.GetFolderNameForm dialog = new GetNewFolderName.GetFolderNameForm();
+
+            if (dialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            Directory.CreateDirectory(cbPath.Text + @"\" + dialog.FolderName);
             refreshScreen();
         }
 
@@ -379,26 +403,63 @@ namespace TotalCommandder.GUI
             lvMain_DoubleClick(null, null);
         }
 
-        private void lvMain_KeyPress(object sender, KeyPressEventArgs e)
+        private void lvMain_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyChar == (char)Keys.Enter)
+            if (e.KeyCode == Keys.Enter)
             {
-                foreach (ListViewItem item in lvMain.Items)
-                    if (item.Selected)
-                        lvMain_DoubleClick(null, null);
+                if (this.lvMain.SelectedItems.Count > 0)
+                    lvMain_DoubleClick(null, null);
             }
-            else if (e.KeyChar == (char)Keys.Back)
+            else if (e.KeyCode == Keys.Back)
                 btnBack_ItemClick(null, null);
 
-        }
+            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Delete && !cbPath.Text.Equals("This PC"))//Nếu người dùng nhấn Shift + Delete và không phải ở This PC thì cho phép xóa
+            {
+                List<string> listPath = new List<string>();
 
+                foreach (ListViewItem item in lvMain.SelectedItems)
+                    listPath.Add(item.Tag.ToString());
+
+                if (lvMain.SelectedItems.Count == 1)//Nếu chỉ có một file cần xóa thì hiển thị rõ thông tin của file cần xóa
+                {
+                    DeleteDialog.DeleteDialog dialog = new DeleteDialog.DeleteDialog(lvMain.SelectedItems[0].Tag.ToString());
+                    if (dialog.ShowDialog() != DialogResult.Yes)
+                        return;
+                }
+                else
+                {
+                    if (MessageBox.Show("Are you sure you want to permanently delete?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                        return;
+                }
+
+                if (BLL.ClassBLL.Instances.deletePermanently(listPath))
+                {
+
+
+                    foreach (ListViewItem item in lvMain.SelectedItems)
+                        lvMain.Items.RemoveByKey(item.Name);
+                }
+            }
+            else if (e.KeyCode == Keys.F2)
+            {
+                ListViewItem item = lvMain.SelectedItems[0];//Lấy Item đang được chọn
+
+                this.oldNameItem = item.Name;
+
+                item.BeginEdit();
+            }
+        }
+        #endregion
         //======================================================================================================================================
         //======================================================================================================================================
         //======================================================================================================================================
         //Combobox event
+        #region ComboboxEvent
 
-        private void cbPath_Properties_QueryCloseUp(object sender, CancelEventArgs e)
+        public void cbPath_Properties_QueryCloseUp(object sender, CancelEventArgs e)
         {
+            if (cbPath.Text.Equals(listBack.Peek()))//Nếu không thay đổi đường dẫn thì không làm gì
+                return;
             try
             {
                 this.listBack.Push(cbPath.Text);
@@ -435,7 +496,7 @@ namespace TotalCommandder.GUI
         {
             if (e.KeyChar == (char)Keys.Enter)
             {
-                if (Directory.Exists(cbPath.Text))
+                if (!cbPath.Equals("This PC") || Directory.Exists(cbPath.Text))//Nếu đường dẫn khác This PC hoặc đường dẫn đó tồn tại thì mới được làm việc ngược lại thông báo và thoát
                     cbPath_Properties_QueryCloseUp(null, null);
                 else
                 {
@@ -444,11 +505,20 @@ namespace TotalCommandder.GUI
                 }
             }
         }
+
+        private void cbPath_TextChanged(object sender, EventArgs e)
+        {
+            if (cbPath.Text.Equals("This PC"))
+                menuItemNewFolder.Enabled = false;
+            else
+                menuItemNewFolder.Enabled = true;
+        }
+        #endregion
         //======================================================================================================================================
         //======================================================================================================================================
         //======================================================================================================================================
         //Get and set contextMenu
-
+        #region Passing ContextMenu Between Parent And Child
         private void setContextMenu()//Thay đổi giá trị item của contextMenu tương ứng với các item bên ngoài
         {
             this.contextMenu.Items[0].Enabled = menuItemOpen.Enabled;
@@ -465,7 +535,7 @@ namespace TotalCommandder.GUI
             menuItemPaste.Enabled = this.contextMenu.Items[3].Enabled;
         }
 
-        private void lvMain_MouseDown(object sender, MouseEventArgs e)
+        private void lvMain_Enter(object sender, EventArgs e)
         {
             if (getContextMenu != null)
                 this.contextMenu = getContextMenu();
@@ -478,11 +548,19 @@ namespace TotalCommandder.GUI
             if (pushContextMenuForParent != null)
                 pushContextMenuForParent(this.contextMenu);
         }
+        #endregion
 
+        #region DragDrop
         private void lvMain_DragEnter(object sender, DragEventArgs e)
         {
-            e.Effect = DragDropEffects.All;
-            // MessageBox.Show("abc");
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
         }
 
         private void lvMain_DragDrop(object sender, DragEventArgs e)
@@ -496,7 +574,198 @@ namespace TotalCommandder.GUI
         {
             MessageBox.Show(e.ToString());
         }
+        #endregion
 
-        
+        #region TreeView Event
+        private void tvMain_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            e.Node.Expand();
+            try
+            {
+                string path = e.Node.Tag.ToString();
+
+                this.listBack.Push(path);
+
+                lvMain.Clear();
+
+                this.Cursor = Cursors.AppStarting;
+
+                showDirectoryAndFiles(this.listBack.Peek());
+
+                this.Cursor = Cursors.Arrow;
+
+                cbPath.Text = path;
+
+                cbPath.Properties.Items.Add(path);
+
+                btnBack.Enabled = true;
+            }
+            catch (Exception ex)
+            { }
+        }
+
+        private void tvMain_AfterExpand(object sender, TreeViewEventArgs e)
+        {
+            string nameNode = e.Node.Name;
+
+            if (!nameNode.Equals("MyComputer") && !nameNode.Equals("Desktop"))
+            {
+                e.Node.Nodes.Clear();
+                BLL.MyTreeView.Instances.AddSubDirectory(e.Node, tvMain);
+            }
+        }
+        #endregion
+
+        #region Pack
+        private void menuItemPack_Click(object sender, EventArgs e)
+        {
+            string zipFilePath = lvMain.SelectedItems[0].Tag.ToString();//Lấy đường dẫn hiện tại
+
+            zipFilePath = zipFilePath.Remove(zipFilePath.LastIndexOf('\\'));//Xóa tên file/folder sau cùng của đường dẫn
+
+            GetNewFolderName.GetFolderNameForm getFolderName = new GetNewFolderName.GetFolderNameForm();//Mở form lấy tên folder mới
+
+            if (getFolderName.ShowDialog() != DialogResult.OK)//Nếu người dùng nhấn No hoặc tắt hộp dialog thì thoát ra và không làm gì
+                return;
+
+            zipFilePath += "\\" + getFolderName.FolderName + ".zip";//Nối đường dẫn với tên folder mới và đuôi của file nén
+
+            while (File.Exists(zipFilePath) || Directory.Exists(zipFilePath))//Nếu đường dẫn đã tồn tại thì yêu cầu nhập lại
+            {
+                MessageBox.Show("The Folder already exists! Please try again!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                if (getFolderName.ShowDialog() != DialogResult.OK)
+                    return;
+
+                zipFilePath = zipFilePath.Remove(zipFilePath.LastIndexOf('\\'));
+
+                zipFilePath += "\\" + getFolderName.FolderName + ".zip";
+            }
+
+            //Nếu tạo đóng gói thành công thì thêm file đó vào listView
+            List<string> arrPath = new List<string>();
+
+            foreach (ListViewItem item in lvMain.SelectedItems)
+                arrPath.Add(item.Tag.ToString());
+
+            if (BLL.ClassBLL.Instances.packFile(arrPath, zipFilePath))
+            {
+                lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeIconFromExtension(zipFilePath));
+
+                FileInfo file = new FileInfo(zipFilePath);
+
+                ListViewItem item = new ListViewItem(file.Name, lvMain.LargeImageList.Images.Count - 1);
+
+                item.Tag = file.FullName;
+
+                item.Name = file.Name;
+
+                lvMain.Items.Add(item);
+            }
+        }
+
+        private void menuItemUnpack_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lvMain.SelectedItems)
+            {
+                string zipFilePath = item.Tag.ToString();
+
+                GetNewFolderName.GetFolderNameForm getFolderName = new GetNewFolderName.GetFolderNameForm();
+
+                if (getFolderName.ShowDialog() != DialogResult.OK)
+                    return;
+
+                zipFilePath = zipFilePath.Remove(zipFilePath.LastIndexOf('\\'));
+
+                zipFilePath += "\\" + getFolderName.FolderName;
+
+                while (Directory.Exists(zipFilePath) || File.Exists(zipFilePath))
+                {
+                    MessageBox.Show("The Folder already exists! Please try again!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    if (getFolderName.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    zipFilePath = zipFilePath.Remove(zipFilePath.LastIndexOf('\\'));
+
+                    zipFilePath += "\\" + getFolderName.FolderName;
+                }
+
+                //Nếu giải nén thành công thì thêm file đó vào listview
+                if (BLL.ClassBLL.Instances.unpackFile(item.Tag.ToString(), zipFilePath))
+                {
+                    lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeIcon(zipFilePath));//.Remove(zipFilePath.LastIndexOf('.'))));
+
+                    FileInfo file = new FileInfo(zipFilePath);
+
+                    ListViewItem lvItem = new ListViewItem(file.Name, lvMain.LargeImageList.Images.Count - 1);
+
+                    lvItem.Tag = file.FullName;
+
+                    lvItem.Name = file.Name;
+
+                    lvMain.Items.Add(lvItem);
+                }
+                else
+                    MessageBox.Show("Sorry!, The format file is not supported!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+
+
+            }
+        }
+
+        #endregion
+
+        private void lvMain_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            try
+            {
+                if (e.Label != null)
+                {
+                    ListViewItem item = lvMain.Items[this.oldNameItem];
+
+                    if (item.Name.Contains(':'))
+                    {
+                        MessageBox.Show("Sorry!, You can't rename the drive", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                        //Nếu folder cần sửa là một drive thì thông báo và không cho sửa tên
+                        e.CancelEdit = true;
+
+                        return;
+                    }
+
+                    if (item.Tag != null)
+                    {
+                        string oldPath = item.Tag.ToString();
+
+                        string newPath = Path.Combine(oldPath.Remove(oldPath.LastIndexOf('\\') + 1), e.Label);
+
+                        if (e.Label != item.Text &&(Directory.Exists(newPath) || File.Exists(newPath)))
+                        {
+                            MessageBox.Show("The folder name already exists! Please try again", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                            e.CancelEdit = true;
+                                                        
+                            return;
+                        }
+                        FileInfo info = new FileInfo(newPath);
+                        if ((info.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                            Microsoft.VisualBasic.FileIO.FileSystem.RenameDirectory(item.Tag.ToString(), e.Label);
+                        else
+                            Microsoft.VisualBasic.FileIO.FileSystem.RenameFile(item.Tag.ToString(), e.Label);
+
+                        item.Tag = newPath;
+                    }
+                }
+            }
+            catch (Exception ex) { e.CancelEdit = true; }
+        }
+
+        private void lvMain_BeforeLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            ListViewItem item = lvMain.SelectedItems[0];//Lấy Item đang được chọn
+
+            this.oldNameItem = item.Name;
+        }
     }
 }

@@ -8,29 +8,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace TotalCommandder
+namespace TotalCommandder.GetNewFolderName
 {
-    public partial class NewFolderForm : Form
+    public partial class GetFolderNameForm : Form
     {
-        public NewFolderForm()
+        public string FolderName
         {
-            InitializeComponent();
-            
+            get { return txtFolderName.Text; }
         }
 
-        public delegate void DgetAction(GUI.uc_DirectoryList.DgetFolderName getFolderName);
-        
-        public DgetAction getAction;
-
-        public string getFolderName()
+        public GetFolderNameForm()
         {
-            return txtFolderName.Text;
+            InitializeComponent();
         }
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            if (getAction != null)
-                getAction(new GUI.uc_DirectoryList.DgetFolderName(getFolderName));
+            DialogResult = System.Windows.Forms.DialogResult.OK;
+            
             this.Close();
         }
 

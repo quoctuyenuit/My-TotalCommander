@@ -1,0 +1,15 @@
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Release\TotalCommandder.exe
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Release\TotalCommandder.pdb
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Release\Ionic.Zip.dll
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.DeleteDialog.DeleteDialog.resources
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.Form1.resources
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.GUI.uc_DirectoryList.resources
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.Properties.Resources.resources
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.csproj.GenerateResource.Cache
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.exe.licenses
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.exe
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.pdb
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.csprojResolveAssemblyReference.cache
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.GetNewFolderName.GetFolderNameForm.resources
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.Packing.PackingForm.resources
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.Packing.UnPacking.resources
