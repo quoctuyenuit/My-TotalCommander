@@ -24,30 +24,86 @@ namespace TotalCommandder.BLL
         }
 
         #region Init TreeView
+
         public void initTreeView(TreeView treeView)
         {
-            treeView.ImageList.Images.Add("MyDocumentsIcon", BLL.ShellIcon.GetLargeIcon(Microsoft.VisualBasic.FileIO.SpecialDirectories.MyDocuments.ToString()));
-            treeView.ImageList.Images.Add("DesktopIcon", BLL.ShellIcon.GetLargeIcon(Microsoft.VisualBasic.FileIO.SpecialDirectories.Desktop.ToString()));
-            treeView.ImageList.Images.Add("MyPicturesIcon", BLL.ShellIcon.GetLargeIcon(Microsoft.VisualBasic.FileIO.SpecialDirectories.MyPictures.ToString()));
             treeView.ImageList.Images.Add("FolderIcon", BLL.ShellIcon.GetLargeFolderIcon());
 
             treeView.Nodes.Clear();
-            TreeNode root = new TreeNode();
-            root.Name = "Desktop";
-            root.Text = "DeskTop";
-            root.ImageKey = "DesktopIcon";
-            root.SelectedImageKey = "DesktopIcon";
-            root.Tag = Microsoft.VisualBasic.FileIO.SpecialDirectories.Desktop;
-            treeView.Nodes.Add(root);//Add root
-            root.Expand();
 
-            AddMyDocuments(root);
-            AddMyComputer(root, treeView);
+            AddDesktop(treeView);
+            AddDownloads(treeView);
+            AddDocuments(treeView);
+            AddPictures(treeView);
+            AddMyComputer(treeView);
         }
+
         #endregion
 
-        #region Add For Tree View
-        private void AddMyComputer(TreeNode root, TreeView treeView)
+        #region AddTreeView
+
+        //Thêm một node gốc vào treeView
+        private void AddRoot(TreeView treeView, string strName, string ImageKey, string ItemTag)
+        {
+            TreeNode node = new TreeNode();
+            node.Name = strName;
+            node.Text = strName;
+            node.ImageKey = ImageKey;
+            node.SelectedImageKey = ImageKey;
+            node.Tag = ItemTag;
+            if (isExistsChildNode(node))
+                node.Nodes.Add("temp");
+            treeView.Nodes.Add(node);
+        }
+        
+        //Thêm một node con vào dưới một node cha có trước
+        private void AddNode(TreeNode parentNode, string strName, string ImageKey, string ItemTag)
+        {
+            TreeNode node = new TreeNode();
+            node.Name = strName;
+            node.Text = strName;
+            node.ImageKey = ImageKey;
+            node.SelectedImageKey = ImageKey;
+            node.Tag = ItemTag;
+            if (isExistsChildNode(node))
+                node.Nodes.Add("temp");
+            parentNode.Nodes.Add(node);
+        }
+
+        private void AddDesktop(TreeView treeView)
+        {
+            treeView.ImageList.Images.Add("DesktopIcon", BLL.ShellIcon.GetLargeIcon(Microsoft.VisualBasic.FileIO.SpecialDirectories.Desktop.ToString()));
+            
+            this.AddRoot(treeView, "Desktop", "DesktopIcon", Microsoft.VisualBasic.FileIO.SpecialDirectories.Desktop);
+        }
+
+        private void AddDownloads(TreeView treeView)
+        {
+            
+            string strPathTemp = Microsoft.VisualBasic.FileIO.SpecialDirectories.MyDocuments; ;
+
+            string Tag = strPathTemp.Remove(strPathTemp.LastIndexOf('\\') + 1) + "Downloads";
+
+            treeView.ImageList.Images.Add("DownloadsIcon", BLL.ShellIcon.GetLargeIcon(Tag));
+
+            this.AddRoot(treeView, "Downloads", "DownloadsIcon", Tag);
+        }
+
+        private void AddDocuments(TreeView treeView)
+        {
+            treeView.ImageList.Images.Add("DocumentsIcon", BLL.ShellIcon.GetLargeIcon(Microsoft.VisualBasic.FileIO.SpecialDirectories.MyDocuments.ToString()));
+            
+            this.AddRoot(treeView, "Documents", "DocumentsIcon", Microsoft.VisualBasic.FileIO.SpecialDirectories.MyDocuments);
+        }
+
+        private void AddPictures(TreeView treeView)
+        {
+            treeView.ImageList.Images.Add("PicturesIcon", BLL.ShellIcon.GetLargeIcon(Microsoft.VisualBasic.FileIO.SpecialDirectories.MyPictures.ToString()));
+            
+            this.AddRoot(treeView, "Pictures", "PicturesIcon", Microsoft.VisualBasic.FileIO.SpecialDirectories.MyPictures);
+        }
+
+        private void AddMyComputer(TreeView treeView)
         {
             TreeNode node = new TreeNode();
             node.Name = "MyComputer";
@@ -59,7 +115,7 @@ namespace TotalCommandder.BLL
             node.Expand();
             //Add Drives
             DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
-            foreach(DriveInfo drive in drives)
+            foreach (DriveInfo drive in drives)
             {
                 string name = ((string.IsNullOrEmpty(drive.VolumeLabel)) ? "Local Drive" : drive.VolumeLabel) + " (" + drive.Name + ")";
                 TreeNode driveNode = new TreeNode();
@@ -73,23 +129,11 @@ namespace TotalCommandder.BLL
                     driveNode.Nodes.Add("temp");
                 node.Nodes.Add(driveNode);
             }
-            root.Nodes.Add(node);
+            treeView.Nodes.Add(node);
         }
 
-        private void AddMyDocuments(TreeNode root)
-        {
-            TreeNode node = new TreeNode();
-            node.Name = "MyDocuments";
-            node.Text = "My Documents";
-            node.ImageKey = "MyDocumentsIcon";
-            node.SelectedImageKey = "MyDocumentsIcon";
-            node.Tag = Microsoft.VisualBasic.FileIO.SpecialDirectories.MyDocuments;
-            if (isExistsChildNode(node))
-                node.Nodes.Add("temp");
-            root.Nodes.Add(node);
-        }
-
-        public void AddSubDirectory(TreeNode parentNode, TreeView treeView)
+        //Add các thư mục vào treeView
+        public void AddDirectory(TreeNode parentNode, TreeView treeView)
         {
             DirectoryInfo[] directories = new DirectoryInfo(parentNode.Tag.ToString()).GetDirectories();
             foreach(DirectoryInfo directory in directories)
@@ -98,17 +142,13 @@ namespace TotalCommandder.BLL
                 if (temp.Contains("Hidden") || temp.Contains(" Hidden"))
                     continue;
 
-                TreeNode node = new TreeNode();
-                node.Name = directory.Name;
-                node.Text = directory.Name;
-                node.ImageKey = "FolderIcon";
-                node.SelectedImageKey = "FolderIcon";
-                node.Tag = directory.FullName;
-                if (isExistsChildNode(node))
-                    node.Nodes.Add("temp");
-                parentNode.Nodes.Add(node);
+
+                this.AddNode(parentNode, directory.Name, "FolderIcon", directory.FullName);
+
             }
         }
+
+        #endregion
 
         private bool isExistsChildNode(TreeNode node)
         {
@@ -121,6 +161,5 @@ namespace TotalCommandder.BLL
             catch (Exception ex) { }
             return false;
         }
-        #endregion
     }
 }

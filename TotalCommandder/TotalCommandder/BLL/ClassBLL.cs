@@ -114,9 +114,9 @@ namespace TotalCommandder.BLL
                     foreach (string path in listPath)
                     {
                         if (Directory.Exists(path))
-                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(path, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin, Microsoft.VisualBasic.FileIO.UICancelOption.DoNothing);
+                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(path, Microsoft.VisualBasic.FileIO.UIOption.AllDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin, Microsoft.VisualBasic.FileIO.UICancelOption.ThrowException);
                         else
-                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(path, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin, Microsoft.VisualBasic.FileIO.UICancelOption.DoNothing);
+                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(path, Microsoft.VisualBasic.FileIO.UIOption.AllDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin, Microsoft.VisualBasic.FileIO.UICancelOption.ThrowException);
                     }
 
                     return true;
@@ -126,7 +126,7 @@ namespace TotalCommandder.BLL
             return false;
         }
 
-        public bool deletePermanently(List<string> listPath)
+        public bool deletePermanently(List<string> listPath, Microsoft.VisualBasic.FileIO.UIOption UI)
         {
             try
             {
@@ -135,9 +135,9 @@ namespace TotalCommandder.BLL
                     foreach (string path in listPath)
                     {
                         if (Directory.Exists(path))
-                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(path, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently, Microsoft.VisualBasic.FileIO.UICancelOption.DoNothing);
+                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(path, UI, Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently, Microsoft.VisualBasic.FileIO.UICancelOption.ThrowException);
                         else
-                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(path);
+                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(path, UI, Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently, Microsoft.VisualBasic.FileIO.UICancelOption.ThrowException);
                     }
                     return true;
                 }
@@ -176,7 +176,7 @@ namespace TotalCommandder.BLL
 
                     //Xóa thư mục tạm đi
                     listPathTemp.Add(temp.FullName);
-                    BLL.ClassBLL.Instances.deletePermanently(listPathTemp);
+                    BLL.ClassBLL.Instances.deletePermanently(listPathTemp, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs);
 
                     return true;
                 }
@@ -186,7 +186,7 @@ namespace TotalCommandder.BLL
 
             //Xóa thư mục tạm
             listPathTemp.Add(temp.FullName);
-            BLL.ClassBLL.Instances.deletePermanently(listPathTemp);
+            BLL.ClassBLL.Instances.deletePermanently(listPathTemp, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs);
             return false;
         }
 
@@ -211,7 +211,7 @@ namespace TotalCommandder.BLL
             catch (Exception ex)
             {
                 if (Directory.Exists(newPath))
-                    deletePermanently(new List<string>() { newPath });
+                    deletePermanently(new List<string>() { newPath }, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs);
             }
 
             return false;

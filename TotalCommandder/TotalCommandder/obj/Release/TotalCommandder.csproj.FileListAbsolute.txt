@@ -1,7 +1,6 @@
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Release\TotalCommandder.exe
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Release\TotalCommandder.pdb
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Release\Ionic.Zip.dll
-C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.DeleteDialog.DeleteDialog.resources
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.Form1.resources
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.GUI.uc_DirectoryList.resources
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.Properties.Resources.resources

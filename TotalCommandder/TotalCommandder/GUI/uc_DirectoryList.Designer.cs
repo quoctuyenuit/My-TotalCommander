@@ -195,10 +195,10 @@
             this.lvMain.VirtualListSize = 278;
             this.lvMain.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lvMain_AfterLabelEdit);
             this.lvMain.BeforeLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lvMain_BeforeLabelEdit);
+            this.lvMain.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lvMain_ItemDrag);
             this.lvMain.SelectedIndexChanged += new System.EventHandler(this.lvMain_SelectedIndexChanged);
             this.lvMain.DragDrop += new System.Windows.Forms.DragEventHandler(this.lvMain_DragDrop);
             this.lvMain.DragEnter += new System.Windows.Forms.DragEventHandler(this.lvMain_DragEnter);
-            this.lvMain.DragLeave += new System.EventHandler(this.lvMain_DragLeave);
             this.lvMain.DoubleClick += new System.EventHandler(this.lvMain_DoubleClick);
             this.lvMain.Enter += new System.EventHandler(this.lvMain_Enter);
             this.lvMain.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvMain_KeyDown);

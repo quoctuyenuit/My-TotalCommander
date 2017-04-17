@@ -216,9 +216,9 @@
             // 
             this.txtFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFileName.Location = new System.Drawing.Point(24, 33);
+            this.txtFileName.Location = new System.Drawing.Point(14, 33);
             this.txtFileName.Name = "txtFileName";
-            this.txtFileName.Size = new System.Drawing.Size(414, 22);
+            this.txtFileName.Size = new System.Drawing.Size(424, 22);
             this.txtFileName.TabIndex = 7;
             // 
             // groupBox3

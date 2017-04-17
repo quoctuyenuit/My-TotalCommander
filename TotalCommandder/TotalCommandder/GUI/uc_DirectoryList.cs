@@ -326,7 +326,8 @@ namespace TotalCommandder.GUI
                     List<string> listPathCopy = new List<string>();
 
                     foreach (ListViewItem item in lvMain.SelectedItems)
-                        listPathCopy.Add(cbPath.Text + @"\" + item.Text);
+                        listPathCopy.Add(item.Tag.ToString());
+
                     getCopyAction(listPathCopy, true);
                 }
 
@@ -344,7 +345,7 @@ namespace TotalCommandder.GUI
                     List<string> listPathCopy = new List<string>();
 
                     foreach (ListViewItem item in lvMain.SelectedItems)
-                        listPathCopy.Add(cbPath.Text + @"\" + item.Text);
+                        listPathCopy.Add(item.Tag.ToString());
                     getCopyAction(listPathCopy, false);
                 }
 
@@ -420,22 +421,8 @@ namespace TotalCommandder.GUI
                 foreach (ListViewItem item in lvMain.SelectedItems)
                     listPath.Add(item.Tag.ToString());
 
-                if (lvMain.SelectedItems.Count == 1)//Nếu chỉ có một file cần xóa thì hiển thị rõ thông tin của file cần xóa
+                if (BLL.ClassBLL.Instances.deletePermanently(listPath, Microsoft.VisualBasic.FileIO.UIOption.AllDialogs))
                 {
-                    DeleteDialog.DeleteDialog dialog = new DeleteDialog.DeleteDialog(lvMain.SelectedItems[0].Tag.ToString());
-                    if (dialog.ShowDialog() != DialogResult.Yes)
-                        return;
-                }
-                else
-                {
-                    if (MessageBox.Show("Are you sure you want to permanently delete?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
-                        return;
-                }
-
-                if (BLL.ClassBLL.Instances.deletePermanently(listPath))
-                {
-
-
                     foreach (ListViewItem item in lvMain.SelectedItems)
                         lvMain.Items.RemoveByKey(item.Name);
                 }
@@ -551,35 +538,75 @@ namespace TotalCommandder.GUI
         #endregion
 
         #region DragDrop
+
         private void lvMain_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.Copy;
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
-            }
+            e.Effect = DragDropEffects.All;
         }
 
         private void lvMain_DragDrop(object sender, DragEventArgs e)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-            foreach (string file in files)
-                MessageBox.Show(file);
+            try
+            {
+                List<string> listPathCopy = new List<string>();
+
+                List<ListViewItem> listItem = new List<ListViewItem>();
+
+                listItem = e.Data.GetData(typeof(List<ListViewItem>)) as List<ListViewItem>;
+
+                foreach (ListViewItem item in listItem)
+                {
+                    string pathDrop = item.Tag.ToString();
+
+                    string fileName = pathDrop.Substring(pathDrop.LastIndexOf('\\') + 1);
+
+                    if (string.IsNullOrEmpty(fileName))
+                        return;
+
+                    //Nếu file chuyển tới đã tồn tại thì thông báo và thoát ra
+                    if (lvMain.Items[fileName] != null)
+                    {
+                        MessageBox.Show("The folder \"" + item.Text + "\" already exists!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        continue;
+                    }
+
+                    listPathCopy.Add(item.Tag.ToString());
+                }
+
+                if (getCopyAction != null)
+                {
+                    getCopyAction(listPathCopy, true);
+                }
+
+                if (getPasteAction != null)
+                {
+                    if (!Directory.Exists(cbPath.Text))//Nếu pastePath không tồn tại thì thoát
+                        return;
+
+                    getPasteAction(cbPath.Text);
+                }
+                refreshScreen();
+            }
+            catch (Exception ex) { }
+
+
         }
 
-        private void lvMain_DragLeave(object sender, EventArgs e)
+        private void lvMain_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            MessageBox.Show(e.ToString());
+            List<ListViewItem> list = new List<ListViewItem>();
+
+            foreach (ListViewItem item in lvMain.SelectedItems)
+                list.Add(item);
+
+            lvMain.DoDragDrop(list, DragDropEffects.Copy);
         }
         #endregion
 
         #region TreeView Event
+
         private void tvMain_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            e.Node.Expand();
             try
             {
                 string path = e.Node.Tag.ToString();
@@ -608,10 +635,10 @@ namespace TotalCommandder.GUI
         {
             string nameNode = e.Node.Name;
 
-            if (!nameNode.Equals("MyComputer") && !nameNode.Equals("Desktop"))
+            if (!nameNode.Equals("MyComputer"))
             {
                 e.Node.Nodes.Clear();
-                BLL.MyTreeView.Instances.AddSubDirectory(e.Node, tvMain);
+                BLL.MyTreeView.Instances.AddDirectory(e.Node, tvMain);
             }
         }
         #endregion
@@ -740,12 +767,12 @@ namespace TotalCommandder.GUI
 
                         string newPath = Path.Combine(oldPath.Remove(oldPath.LastIndexOf('\\') + 1), e.Label);
 
-                        if (e.Label != item.Text &&(Directory.Exists(newPath) || File.Exists(newPath)))
+                        if (e.Label != item.Text && (Directory.Exists(newPath) || File.Exists(newPath)))
                         {
                             MessageBox.Show("The folder name already exists! Please try again", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                             e.CancelEdit = true;
-                                                        
+
                             return;
                         }
                         FileInfo info = new FileInfo(newPath);
@@ -767,5 +794,7 @@ namespace TotalCommandder.GUI
 
             this.oldNameItem = item.Name;
         }
+
+
     }
 }

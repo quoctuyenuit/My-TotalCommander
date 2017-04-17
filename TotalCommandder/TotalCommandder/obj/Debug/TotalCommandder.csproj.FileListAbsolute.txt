@@ -30,7 +30,6 @@ C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\o
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.exe.licenses
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.exe
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.pdb
-C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.DeleteDialog.DeleteDialog.resources
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Debug\Ionic.Zip.dll
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.GetNewFolderName.GetFolderNameForm.resources
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.Packing.PackingForm.resources
