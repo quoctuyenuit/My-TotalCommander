@@ -12,3 +12,4 @@ C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\o
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.GetNewFolderName.GetFolderNameForm.resources
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.Packing.PackingForm.resources
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.Packing.UnPacking.resources
+C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.Find.FindForm.resources

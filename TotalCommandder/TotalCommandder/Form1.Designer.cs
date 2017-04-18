@@ -29,11 +29,27 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.ribbonControl1 = new DevExpress.XtraBars.Ribbon.RibbonControl();
             this.btnPack = new DevExpress.XtraBars.BarButtonItem();
             this.btnUnPack = new DevExpress.XtraBars.BarButtonItem();
+            this.skinRibbonGalleryBarItem1 = new DevExpress.XtraBars.SkinRibbonGalleryBarItem();
+            this.chkOneScreen = new DevExpress.XtraBars.BarCheckItem();
+            this.chkTwoScreen = new DevExpress.XtraBars.BarCheckItem();
+            this.btnCopy = new DevExpress.XtraBars.BarButtonItem();
+            this.btnCut = new DevExpress.XtraBars.BarButtonItem();
+            this.btnPaste = new DevExpress.XtraBars.BarButtonItem();
+            this.btnRename = new DevExpress.XtraBars.BarButtonItem();
+            this.btnSelectAll = new DevExpress.XtraBars.BarButtonItem();
+            this.btnNoneSelect = new DevExpress.XtraBars.BarButtonItem();
+            this.btnDelete = new DevExpress.XtraBars.BarSubItem();
+            this.btnRecycleDelete = new DevExpress.XtraBars.BarButtonItem();
+            this.btnPermanentlyDelete = new DevExpress.XtraBars.BarButtonItem();
+            this.btnNotepad = new DevExpress.XtraBars.BarButtonItem();
+            this.btnFind = new DevExpress.XtraBars.BarButtonItem();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
-            this.ribbonPageGroup1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.Group2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.ribbonPage2 = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuItemOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemCopy = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,13 +65,14 @@
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitMain = new System.Windows.Forms.SplitContainer();
-            this.skinRibbonGalleryBarItem1 = new DevExpress.XtraBars.SkinRibbonGalleryBarItem();
-            this.ribbonPage2 = new DevExpress.XtraBars.Ribbon.RibbonPage();
+            this.timer = new System.Windows.Forms.Timer(this.components);
+            this.popupMenu1 = new DevExpress.XtraBars.PopupMenu(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).BeginInit();
             this.contextMenu.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitMain)).BeginInit();
             this.splitMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.popupMenu1)).BeginInit();
             this.SuspendLayout();
             // 
             // ribbonControl1
@@ -66,10 +83,23 @@
             this.ribbonControl1.ExpandCollapseItem,
             this.btnPack,
             this.btnUnPack,
-            this.skinRibbonGalleryBarItem1});
+            this.skinRibbonGalleryBarItem1,
+            this.chkOneScreen,
+            this.chkTwoScreen,
+            this.btnCopy,
+            this.btnCut,
+            this.btnPaste,
+            this.btnRename,
+            this.btnSelectAll,
+            this.btnNoneSelect,
+            this.btnDelete,
+            this.btnRecycleDelete,
+            this.btnPermanentlyDelete,
+            this.btnNotepad,
+            this.btnFind});
             this.ribbonControl1.Location = new System.Drawing.Point(0, 0);
             this.ribbonControl1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.ribbonControl1.MaxItemId = 5;
+            this.ribbonControl1.MaxItemId = 18;
             this.ribbonControl1.Name = "ribbonControl1";
             this.ribbonControl1.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.ribbonPage1,
@@ -100,20 +130,155 @@
             this.btnUnPack.Name = "btnUnPack";
             this.btnUnPack.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnUnPack_ItemClick);
             // 
+            // skinRibbonGalleryBarItem1
+            // 
+            this.skinRibbonGalleryBarItem1.Caption = "skinRibbonGalleryBarItem1";
+            this.skinRibbonGalleryBarItem1.Id = 4;
+            this.skinRibbonGalleryBarItem1.Name = "skinRibbonGalleryBarItem1";
+            // 
+            // chkOneScreen
+            // 
+            this.chkOneScreen.Caption = "One Screen";
+            this.chkOneScreen.Id = 7;
+            this.chkOneScreen.LargeGlyph = global::TotalCommandder.Properties.Resources.oneScreenIcon;
+            this.chkOneScreen.Name = "chkOneScreen";
+            this.chkOneScreen.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.chkOneScreen_ItemClick);
+            // 
+            // chkTwoScreen
+            // 
+            this.chkTwoScreen.BindableChecked = true;
+            this.chkTwoScreen.Caption = "Two Screen";
+            this.chkTwoScreen.Checked = true;
+            this.chkTwoScreen.Id = 8;
+            this.chkTwoScreen.LargeGlyph = global::TotalCommandder.Properties.Resources.twoScreenIcon;
+            this.chkTwoScreen.Name = "chkTwoScreen";
+            this.chkTwoScreen.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.chkTwoScreen_ItemClick);
+            // 
+            // btnCopy
+            // 
+            this.btnCopy.Caption = "Copy";
+            this.btnCopy.Enabled = false;
+            this.btnCopy.Id = 1;
+            this.btnCopy.LargeGlyph = global::TotalCommandder.Properties.Resources.copy_32x32;
+            this.btnCopy.Name = "btnCopy";
+            this.btnCopy.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnCopy_ItemClick);
+            // 
+            // btnCut
+            // 
+            this.btnCut.Caption = "Cut";
+            this.btnCut.Enabled = false;
+            this.btnCut.Id = 2;
+            this.btnCut.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("btnCut.LargeGlyph")));
+            this.btnCut.Name = "btnCut";
+            this.btnCut.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnCut_ItemClick);
+            // 
+            // btnPaste
+            // 
+            this.btnPaste.Caption = "Paste";
+            this.btnPaste.Enabled = false;
+            this.btnPaste.Id = 3;
+            this.btnPaste.LargeGlyph = global::TotalCommandder.Properties.Resources.paste_32x32;
+            this.btnPaste.Name = "btnPaste";
+            this.btnPaste.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnPaste_ItemClick);
+            // 
+            // btnRename
+            // 
+            this.btnRename.Caption = "Rename";
+            this.btnRename.Enabled = false;
+            this.btnRename.Id = 5;
+            this.btnRename.LargeGlyph = global::TotalCommandder.Properties.Resources.rename;
+            this.btnRename.Name = "btnRename";
+            this.btnRename.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnRename_ItemClick);
+            // 
+            // btnSelectAll
+            // 
+            this.btnSelectAll.Caption = "Select All";
+            this.btnSelectAll.Glyph = global::TotalCommandder.Properties.Resources.selecttable_32x32;
+            this.btnSelectAll.Id = 6;
+            this.btnSelectAll.Name = "btnSelectAll";
+            this.btnSelectAll.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnSelectAll_ItemClick);
+            // 
+            // btnNoneSelect
+            // 
+            this.btnNoneSelect.Caption = "None Select";
+            this.btnNoneSelect.Glyph = global::TotalCommandder.Properties.Resources.no_border_32x32;
+            this.btnNoneSelect.Id = 7;
+            this.btnNoneSelect.Name = "btnNoneSelect";
+            this.btnNoneSelect.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnNoneSelect_ItemClick);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Caption = "Delete";
+            this.btnDelete.Id = 13;
+            this.btnDelete.LargeGlyph = global::TotalCommandder.Properties.Resources.cancel_32x32;
+            this.btnDelete.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] {
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnRecycleDelete),
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnPermanentlyDelete)});
+            this.btnDelete.Name = "btnDelete";
+            // 
+            // btnRecycleDelete
+            // 
+            this.btnRecycleDelete.Caption = "Recycle";
+            this.btnRecycleDelete.Glyph = global::TotalCommandder.Properties.Resources.recycleBinIcon;
+            this.btnRecycleDelete.Id = 14;
+            this.btnRecycleDelete.Name = "btnRecycleDelete";
+            this.btnRecycleDelete.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnRecycleDelete_ItemClick);
+            // 
+            // btnPermanentlyDelete
+            // 
+            this.btnPermanentlyDelete.Caption = "Permanently Delete";
+            this.btnPermanentlyDelete.Glyph = global::TotalCommandder.Properties.Resources.delete_16x16;
+            this.btnPermanentlyDelete.Id = 15;
+            this.btnPermanentlyDelete.Name = "btnPermanentlyDelete";
+            this.btnPermanentlyDelete.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnPermanentlyDelete_ItemClick);
+            // 
+            // btnNotepad
+            // 
+            this.btnNotepad.Caption = "Notepad";
+            this.btnNotepad.Id = 16;
+            this.btnNotepad.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("btnNotepad.LargeGlyph")));
+            this.btnNotepad.Name = "btnNotepad";
+            this.btnNotepad.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnNotepad_ItemClick);
+            // 
+            // btnFind
+            // 
+            this.btnFind.Caption = "Find";
+            this.btnFind.Glyph = global::TotalCommandder.Properties.Resources.find_16x16;
+            this.btnFind.Id = 17;
+            this.btnFind.LargeGlyph = global::TotalCommandder.Properties.Resources.find_32x32;
+            this.btnFind.Name = "btnFind";
+            // 
             // ribbonPage1
             // 
             this.ribbonPage1.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
-            this.ribbonPageGroup1});
+            this.Group2});
             this.ribbonPage1.Name = "ribbonPage1";
-            this.ribbonPage1.Text = "Tools";
+            this.ribbonPage1.Text = "Home";
             // 
-            // ribbonPageGroup1
+            // Group2
             // 
-            this.ribbonPageGroup1.ItemLinks.Add(this.btnPack);
-            this.ribbonPageGroup1.ItemLinks.Add(this.btnUnPack);
-            this.ribbonPageGroup1.ItemLinks.Add(this.skinRibbonGalleryBarItem1);
-            this.ribbonPageGroup1.Name = "ribbonPageGroup1";
-            this.ribbonPageGroup1.Text = "ribbonPageGroup1";
+            this.Group2.ItemLinks.Add(this.chkOneScreen);
+            this.Group2.ItemLinks.Add(this.chkTwoScreen);
+            this.Group2.ItemLinks.Add(this.skinRibbonGalleryBarItem1);
+            this.Group2.ItemLinks.Add(this.btnCopy, true);
+            this.Group2.ItemLinks.Add(this.btnCut);
+            this.Group2.ItemLinks.Add(this.btnPaste);
+            this.Group2.ItemLinks.Add(this.btnDelete, true);
+            this.Group2.ItemLinks.Add(this.btnRename);
+            this.Group2.ItemLinks.Add(this.btnFind);
+            this.Group2.ItemLinks.Add(this.btnPack, true);
+            this.Group2.ItemLinks.Add(this.btnUnPack);
+            this.Group2.ItemLinks.Add(this.btnNotepad);
+            this.Group2.ItemLinks.Add(this.btnSelectAll, true);
+            this.Group2.ItemLinks.Add(this.btnNoneSelect);
+            this.Group2.Name = "Group2";
+            this.Group2.ShowCaptionButton = false;
+            this.Group2.Text = "View";
+            // 
+            // ribbonPage2
+            // 
+            this.ribbonPage2.Name = "ribbonPage2";
+            this.ribbonPage2.Text = "ribbonPage2";
             // 
             // contextMenu
             // 
@@ -243,16 +408,14 @@
             this.splitMain.SplitterDistance = 679;
             this.splitMain.TabIndex = 4;
             // 
-            // skinRibbonGalleryBarItem1
+            // timer
             // 
-            this.skinRibbonGalleryBarItem1.Caption = "skinRibbonGalleryBarItem1";
-            this.skinRibbonGalleryBarItem1.Id = 4;
-            this.skinRibbonGalleryBarItem1.Name = "skinRibbonGalleryBarItem1";
+            this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
-            // ribbonPage2
+            // popupMenu1
             // 
-            this.ribbonPage2.Name = "ribbonPage2";
-            this.ribbonPage2.Text = "ribbonPage2";
+            this.popupMenu1.Name = "popupMenu1";
+            this.popupMenu1.Ribbon = this.ribbonControl1;
             // 
             // Form1
             // 
@@ -275,6 +438,7 @@
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitMain)).EndInit();
             this.splitMain.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.popupMenu1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -284,7 +448,6 @@
 
         private DevExpress.XtraBars.Ribbon.RibbonControl ribbonControl1;
         private DevExpress.XtraBars.Ribbon.RibbonPage ribbonPage1;
-        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup1;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem menuItemOpen;
         private System.Windows.Forms.ToolStripMenuItem menuItemCopy;
@@ -295,7 +458,6 @@
         private DevExpress.XtraBars.BarButtonItem btnPack;
         private DevExpress.XtraBars.BarButtonItem btnUnPack;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.SplitContainer splitMain;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
@@ -304,6 +466,24 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel6;
         private DevExpress.XtraBars.SkinRibbonGalleryBarItem skinRibbonGalleryBarItem1;
         private DevExpress.XtraBars.Ribbon.RibbonPage ribbonPage2;
+        private System.Windows.Forms.SplitContainer splitMain;
+        private DevExpress.XtraBars.BarCheckItem chkOneScreen;
+        private DevExpress.XtraBars.BarCheckItem chkTwoScreen;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup2;
+        private DevExpress.XtraBars.BarButtonItem btnCopy;
+        private DevExpress.XtraBars.BarButtonItem btnCut;
+        private DevExpress.XtraBars.BarButtonItem btnPaste;
+        private DevExpress.XtraBars.BarButtonItem btnRename;
+        private DevExpress.XtraBars.BarButtonItem btnSelectAll;
+        private DevExpress.XtraBars.BarButtonItem btnNoneSelect;
+        private System.Windows.Forms.Timer timer;
+        private DevExpress.XtraBars.PopupMenu popupMenu1;
+        private DevExpress.XtraBars.BarSubItem btnDelete;
+        private DevExpress.XtraBars.BarButtonItem btnRecycleDelete;
+        private DevExpress.XtraBars.BarButtonItem btnPermanentlyDelete;
+        private DevExpress.XtraBars.BarButtonItem btnNotepad;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup Group2;
+        private DevExpress.XtraBars.BarButtonItem btnFind;
     }
 }
 

@@ -6,44 +6,17 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TotalCommandder
 {
     public partial class Form1 : DevExpress.XtraBars.Ribbon.RibbonForm
     {
-        public delegate void Drefresh();
-
-        public Drefresh refresh1;
-        public Drefresh refresh2;
-
-        //Lấy sự kiện refresh listview ở giao diện con 2
-        void getRefreshAction1(Drefresh refresh)
-        {
-            this.refresh1 = refresh;
-        }
-
-        //Lấy sự kiện refresh listview ở giao diện con 1
-        void getRefreshAction2(Drefresh refresh)
-        {
-            this.refresh2 = refresh;
-        }
-
         private GUI.uc_DirectoryList gui1;
 
         private GUI.uc_DirectoryList gui2;
-
-        public GUI.uc_DirectoryList Gui2
-        {
-            get { return gui2; }
-            set { gui2 = value; }
-        }
-
-        public GUI.uc_DirectoryList Gui1
-        {
-            get { return gui1; }
-            set { gui1 = value; }
-        }
+        private Task task;
 
         public Form1()
         {
@@ -53,13 +26,8 @@ namespace TotalCommandder
 
             //Set Skin for form
             DevExpress.Skins.SkinManager.EnableFormSkins();
-            DevExpress.LookAndFeel.UserLookAndFeel.Default.SkinName = "Office 2010 Blue";
-
+            DevExpress.LookAndFeel.UserLookAndFeel.Default.SkinName = "DevExpress Style";
         }
-
-        private List<string> listCopyPath { get; set; }
-
-        private bool isCopy { get; set; }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -68,9 +36,10 @@ namespace TotalCommandder
             gui1.getCopyAction = new GUI.uc_DirectoryList.DgetCopyAction(copyAction);
             gui1.getCopyPath = new GUI.uc_DirectoryList.DgetCopyPath(pushCopyPath);
             gui1.getPasteAction = new GUI.uc_DirectoryList.DgetPasteAction(pasteAction);
-            gui1.getRefreshAction = new GUI.uc_DirectoryList.DgetRefreshAction(getRefreshAction1);
             gui1.getContextMenu = new GUI.uc_DirectoryList.DgetContextMenu(pushContextMenu);
             gui1.pushContextMenuForParent = new GUI.uc_DirectoryList.DpushContextMenuForParent(setContextMenu);
+            gui1.getRefreshAll = new GUI.uc_DirectoryList.DgetRefreshAll(refreshAll);
+            gui1.setEnabledButton = new GUI.uc_DirectoryList.DsetEnabledButton(setEnabledForSelectItem);
             splitMain.Panel1.Controls.Add(gui1);
             //------------------------------------------------------------------------------------
             this.gui2 = new GUI.uc_DirectoryList(contextMenu);
@@ -78,11 +47,24 @@ namespace TotalCommandder
             gui2.getCopyAction = new GUI.uc_DirectoryList.DgetCopyAction(copyAction);
             gui2.getCopyPath = new GUI.uc_DirectoryList.DgetCopyPath(pushCopyPath);
             gui2.getPasteAction = new GUI.uc_DirectoryList.DgetPasteAction(pasteAction);
-            gui2.getRefreshAction = new GUI.uc_DirectoryList.DgetRefreshAction(getRefreshAction2);
             gui2.getContextMenu = new GUI.uc_DirectoryList.DgetContextMenu(pushContextMenu);
             gui2.pushContextMenuForParent = new GUI.uc_DirectoryList.DpushContextMenuForParent(setContextMenu);
+            gui2.getRefreshAll = new GUI.uc_DirectoryList.DgetRefreshAll(refreshAll);
+            gui2.setEnabledButton = new GUI.uc_DirectoryList.DsetEnabledButton(setEnabledForSelectItem);
             splitMain.Panel2.Controls.Add(gui2);
         }
+
+        public void refreshAll()
+        {
+            this.gui1.showDirectoryAndFiles(this.gui1.ListBack.Peek());
+            this.gui2.showDirectoryAndFiles(this.gui2.ListBack.Peek());
+        }
+
+        #region Thao Tác với file
+
+        private List<string> listCopyPath { get; set; }
+
+        private bool isCopy { get; set; }
 
         private void copyAction(List<string> listPath, bool isCopy)
         {
@@ -116,14 +98,15 @@ namespace TotalCommandder
                         File.Delete(path);
                 }
 
+                this.isCopy = true;
+
                 this.listCopyPath.Clear();
             }
-
-            if (this.refresh1 != null)
-                this.refresh1();
-            if (this.refresh2 != null)
-                this.refresh2();
         }
+
+        #endregion
+
+        #region ContextMenu
 
         private void setContextMenu()//Thay đổi giá trị item của contextMenu tương ứng với các item bên ngoài
         {
@@ -146,7 +129,9 @@ namespace TotalCommandder
             this.contextMenu = contextMenu;
         }
 
-        #region Button Events
+        #endregion
+
+        #region Packing Unpacking
 
         private void btnPack_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
@@ -167,7 +152,7 @@ namespace TotalCommandder
 
                     this.gui1.LvMain.Clear();
 
-                    this.gui1.showDirectoryAndFiles(this.gui1.CbPath.Text);
+                    this.gui1.showDirectoryAndFiles(this.gui1.ListBack.Peek());
                 }
                 catch (Exception ex)
                 {
@@ -181,7 +166,6 @@ namespace TotalCommandder
                 item.Selected = true;
                 item.Focused = true;
             }
-
         }
 
         private void btnUnPack_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -203,7 +187,7 @@ namespace TotalCommandder
 
                     this.gui1.LvMain.Clear();
 
-                    this.gui1.showDirectoryAndFiles(this.gui1.CbPath.Text);
+                    this.gui1.showDirectoryAndFiles(this.gui1.ListBack.Peek());
                 }
                 catch (Exception ex)
                 {
@@ -220,5 +204,270 @@ namespace TotalCommandder
 
         }
         #endregion
+
+        #region View
+
+        private void chkOneScreen_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            if (chkOneScreen.Checked)
+            {
+                chkTwoScreen.Checked = false;
+                splitMain.Panel2Collapsed = true;
+            }
+            else
+                chkOneScreen.Checked = true;
+        }
+
+        private void chkTwoScreen_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            if (chkTwoScreen.Checked)
+            {
+                chkOneScreen.Checked = false;
+                splitMain.Panel2Collapsed = false;
+            }
+            else
+                chkTwoScreen.Checked = true;
+        }
+
+        #endregion
+
+
+        public void setEnabledForSelectItem(bool isSelected)
+        {
+            btnCopy.Enabled = btnCut.Enabled = btnDelete.Enabled = btnRename.Enabled = isSelected;
+        }
+
+        #region Button Click Event
+
+        private void btnCopy_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            btnPaste.Enabled = true;
+
+            this.listCopyPath.Clear();
+
+            if (this.gui1.LvMain.Focused)
+            {
+                foreach (ListViewItem item in this.gui1.LvMain.SelectedItems)
+                    this.listCopyPath.Add(item.Tag.ToString());
+            }
+            else if (this.gui2.LvMain.Focused)
+            {
+                foreach (ListViewItem item in this.gui2.LvMain.SelectedItems)
+                    this.listCopyPath.Add(item.Tag.ToString());
+            }
+
+            this.isCopy = true;
+        }
+
+        private void btnCut_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            btnPaste.Enabled = true;
+
+            if (this.gui1.LvMain.Focused)
+            {
+                foreach (ListViewItem item in this.gui1.LvMain.SelectedItems)
+                    this.listCopyPath.Add(item.Tag.ToString());
+            }
+            else if (this.gui2.LvMain.Focused)
+            {
+                foreach (ListViewItem item in this.gui2.LvMain.SelectedItems)
+                    this.listCopyPath.Add(item.Tag.ToString());
+            }
+
+            this.isCopy = false;
+        }
+
+        private void btnPaste_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            btnPaste.Enabled = false;
+
+            string pathPaste = "";
+
+            if (this.gui1.LvMain.Focused)
+            {
+                pathPaste = this.gui1.ListBack.Peek();
+            }
+            else if (this.gui2.LvMain.Focused)
+            {
+                pathPaste = this.gui2.ListBack.Peek();
+            }
+            else
+            {
+                MessageBox.Show("You must focus on one UI", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            this.task = Task.Run(() => pasteAction(pathPaste));
+            timer.Start();
+
+        }
+
+        private void btnRecycleDelete_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            if (this.gui1.LvMain.Focused)
+            {
+                this.gui1.menuItemDelete_Click(null, null);
+            }
+            else if (this.gui2.LvMain.Focused)
+            {
+                this.gui2.menuItemDelete_Click(null, null);
+            }
+            else
+            {
+                MessageBox.Show("You must select some items", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnPermanentlyDelete_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            List<string> listPath = new List<string>();
+
+            ListView lvMain = null;
+
+            if (this.gui1.LvMain.Focused)
+                lvMain = this.gui1.LvMain;
+            else if (this.gui2.LvMain.Focused)
+                lvMain = this.gui2.LvMain;
+
+
+            //Nếu không nhận được lvMain nào thì thoát ra
+            if (lvMain == null)
+            {
+                MessageBox.Show("You must select some items", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                setEnabledForSelectItem(false);
+                return;
+            }
+            
+            foreach (ListViewItem item in lvMain.SelectedItems)
+                listPath.Add(item.Tag.ToString());
+
+            if (listPath.Count > 1)
+            {
+                //Nếu có nhiều hơn 1 item thì hiển thị MessBox chung cho các items được xóa
+                if (MessageBox.Show("Are you sure you want to permanetly delete these " + listPath.Count + " items?", "Delete Multipe Items", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes
+                    && BLL.ClassBLL.Instances.deletePermanently(listPath, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs))
+                {
+                    foreach (ListViewItem item in lvMain.SelectedItems)
+                        lvMain.Items.RemoveByKey(item.Name);
+                }
+            }
+            else
+            {
+                //Nếu chỉ có một item thì hiển thị UI của nó
+                if (BLL.ClassBLL.Instances.deletePermanently(listPath, Microsoft.VisualBasic.FileIO.UIOption.AllDialogs))
+                {
+                    foreach (ListViewItem item in lvMain.SelectedItems)
+                        lvMain.Items.RemoveByKey(item.Name);
+                }
+            }
+        }
+
+        private void btnRename_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            List<string> listPath = new List<string>();
+
+            ListView lvMain;
+
+            if (this.gui1.LvMain.Focused)
+            {
+                lvMain = this.gui1.LvMain;
+                if (lvMain.SelectedItems.Count > 0)
+                {
+                    ListViewItem item = lvMain.SelectedItems[0];//Lấy Item đang được chọn
+
+                    this.gui1.oldNameItem = item.Text;
+
+                    item.BeginEdit();
+                }
+            }
+            else if (this.gui2.LvMain.Focused)
+            {
+                lvMain = this.gui2.LvMain;
+                if (lvMain.SelectedItems.Count > 0)
+                {
+                    ListViewItem item = lvMain.SelectedItems[0];//Lấy Item đang được chọn
+
+                    this.gui2.oldNameItem = item.Text;
+
+                    item.BeginEdit();
+                }
+            }
+            else
+                MessageBox.Show("You must select some items", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            
+        }
+
+        private void btnSelectAll_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            if (this.gui1.LvMain.Focused)
+            {
+                foreach (ListViewItem item in this.gui1.LvMain.Items)
+                    item.Selected = true;
+            }
+            else if (this.gui2.LvMain.Focused)
+            {
+                foreach (ListViewItem item in this.gui2.LvMain.Items)
+                    item.Selected = true;
+            }
+            else
+                MessageBox.Show("You must focus on one display", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        }
+
+        private void btnNoneSelect_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            if (this.gui1.LvMain.Focused)
+            {
+                foreach (ListViewItem item in this.gui1.LvMain.Items)
+                    item.Selected = false;
+            }
+            else if (this.gui2.LvMain.Focused)
+            {
+                foreach (ListViewItem item in this.gui2.LvMain.Items)
+                    item.Selected = false;
+            }
+            else
+                MessageBox.Show("You must focus on one display", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        #endregion
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            if (this.task.IsCompleted)
+            {
+                //Gọi hàm refresh lại tất cả các giao diện ở form1
+                refreshAll();
+                //Dừng bộ đếm khi đã kết thúc tiến trình
+                this.timer.Stop();
+            }
+        }
+
+        private void btnNotepad_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("notepad.exe");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Soory! Can't open notepad now!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        
+
+       
+
+       
+
+       
+
+       
+
+       
+
+        
+
+        
     }
 }

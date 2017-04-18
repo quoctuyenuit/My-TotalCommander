@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ionic.Zip;
+using System.Drawing;
 
 namespace TotalCommandder.BLL
 {
@@ -28,15 +29,34 @@ namespace TotalCommandder.BLL
 
         public void showDrive(DriveInfo drive, ListView lvMain)
         {
-            string name = ((string.IsNullOrEmpty(drive.VolumeLabel)) ? "Local Drive" : drive.VolumeLabel) + " (" + drive.Name + ")";
+            string text = ((string.IsNullOrEmpty(drive.VolumeLabel)) ? "Local Drive" : drive.VolumeLabel) + " (" + drive.Name + ")";
 
             lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeIcon(drive.Name).ToBitmap());
 
-            ListViewItem item = new ListViewItem(name, lvMain.LargeImageList.Images.Count - 1);
+            ListViewItem item;
 
-            item.Tag = drive.Name;
+            if (lvMain.View == View.Tile)
+            {
+                item = new ListViewItem();
+            }
+            else
+            {
+                string[] strItem = new string[4];
+                strItem[0] = drive.Name;
+                strItem[1] = drive.GetType().Name;
+                strItem[2] = Math.Round(drive.TotalSize / (Math.Pow(2, 30))).ToString() + " GB";
+                strItem[3] = Math.Round(drive.TotalFreeSpace / (Math.Pow(2, 30))).ToString() + " GB";
+
+                item = new ListViewItem(strItem);
+            }
+
+            item.Text = text;
 
             item.Name = drive.Name;
+
+            item.ImageIndex = lvMain.LargeImageList.Images.Count - 1;
+
+            item.Tag = drive.Name;
 
             lvMain.Items.Add(item);
         }
@@ -44,12 +64,25 @@ namespace TotalCommandder.BLL
         public void showDirectory(DirectoryInfo directoryInfo, ListView lvMain)
         {
             lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeFolderIcon().ToBitmap());
+            ListViewItem item;
+            
+            if (lvMain.View == View.Tile)
+                item = new ListViewItem(directoryInfo.Name);
+            else
+            {
+                string[] strItem = new string[3];
+                strItem[0] = directoryInfo.Name;
+                strItem[1] = directoryInfo.CreationTime.ToShortDateString() + " " + directoryInfo.CreationTime.ToLongTimeString();
+                strItem[2] = directoryInfo.GetType().Name;
 
-            ListViewItem item = new ListViewItem(directoryInfo.Name, lvMain.LargeImageList.Images.Count - 1);
-
-            item.Tag = directoryInfo.FullName;
+                item = new ListViewItem(strItem);
+            }
 
             item.Name = directoryInfo.Name;
+
+            item.ImageIndex = lvMain.LargeImageList.Images.Count - 1;
+
+            item.Tag = directoryInfo.FullName;
 
             lvMain.Items.Add(item);
         }
@@ -58,51 +91,107 @@ namespace TotalCommandder.BLL
         {
             lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeIconFromExtension(fileInfo.FullName).ToBitmap());
 
-            ListViewItem item = new ListViewItem(fileInfo.Name, lvMain.LargeImageList.Images.Count - 1);
+            ListViewItem item;// = new ListViewItem(fileInfo.Name, lvMain.LargeImageList.Images.Count - 1);
 
-            item.Tag = fileInfo.FullName;
+            if (lvMain.View == View.Tile)
+            {
+                item = new ListViewItem();
+
+                
+            }
+            else
+            {
+                double fileSize = fileInfo.Length;
+
+                string[] Unit = new string[] { " KB", " MB", " GB", " TB" };
+                int u = 0;
+                do
+                {
+                    fileSize = fileSize / (Math.Pow(2, 10 * (u + 1)));
+                } while (fileSize > 1000 && u < 4);
+
+                fileSize = Math.Round(fileSize, 2);
+
+                string[] strItem = new string[4];
+                strItem[0] = fileInfo.Name;
+                strItem[1] = fileInfo.CreationTime.ToShortDateString() + " "+ fileInfo.CreationTime.ToLongTimeString();
+                strItem[2] = fileInfo.GetType().Name;
+                strItem[3] = fileSize.ToString() + Unit[u];
+
+                item = new ListViewItem(strItem);
+            }
 
             item.Name = fileInfo.Name;
+
+            if (fileInfo.Name.Contains('.'))
+                item.Text = fileInfo.Name.Remove(fileInfo.Name.LastIndexOf('.'));
+            else
+                item.Text = fileInfo.Name;
+
+            item.ImageIndex = lvMain.LargeImageList.Images.Count - 1;
+
+            item.Tag = fileInfo.FullName;
 
             lvMain.Items.Add(item);
         }
 
-        public bool copyDirectory(string sourcePath, string destinationPath)
+       
+        public bool copyDirectory(string sourcePath, string destinationPath,Microsoft.VisualBasic.FileIO.UIOption UI = Microsoft.VisualBasic.FileIO.UIOption.AllDialogs )
         {
-            if (File.Exists(sourcePath))
+            try
             {
-                FileInfo f = new FileInfo(sourcePath);
-                f.CopyTo(destinationPath + @"\" + f.Name);
+                destinationPath = Path.Combine(destinationPath, Path.Combine(destinationPath, sourcePath.Substring(sourcePath.LastIndexOf('\\') + 1)));
+
+                if (Directory.Exists(sourcePath))
+                {
+                    Directory.CreateDirectory(destinationPath);
+
+                    Microsoft.VisualBasic.FileIO.FileSystem.CopyDirectory(sourcePath, destinationPath, UI, Microsoft.VisualBasic.FileIO.UICancelOption.ThrowException);
+                }
+                else
+                    Microsoft.VisualBasic.FileIO.FileSystem.CopyFile(sourcePath, destinationPath, UI, Microsoft.VisualBasic.FileIO.UICancelOption.ThrowException);
                 return true;
             }
+            catch (Exception ex) { }
 
-            if (!Directory.Exists(destinationPath))//Nếu destinationPath không có folder đó thì tạo folder mới
-            {
-                return false;
-            }
+            return false;
 
-            DirectoryInfo directoryInfo = new DirectoryInfo(sourcePath);
+            #region MyCodeCopy
+            //try
+            //{
+            //    if (File.Exists(sourcePath))
+            //    {
+            //        FileInfo f = new FileInfo(sourcePath);
+            //        f.CopyTo(destinationPath + @"\" + f.Name);
+            //        return true;
+            //    }
 
-            string[] temp = sourcePath.Split('\\');
+            //    DirectoryInfo directoryInfo = new DirectoryInfo(sourcePath);
 
-            Directory.CreateDirectory(Path.Combine(destinationPath, temp.Last()));
+            //    string[] temp = sourcePath.Split('\\');
 
-            FileInfo[] files = directoryInfo.GetFiles();
+            //    Directory.CreateDirectory(Path.Combine(destinationPath, temp.Last()));
 
-            destinationPath = Path.Combine(destinationPath, temp.Last());
+            //    FileInfo[] files = directoryInfo.GetFiles();
 
-            //Copy files in the directory
-            foreach (FileInfo f in files)
-            {
-                f.CopyTo(System.IO.Path.Combine(destinationPath, f.Name));
-            }
-            //Copy subdirectorys
-            DirectoryInfo[] direc = directoryInfo.GetDirectories();
-            foreach (DirectoryInfo d in direc)
-            {
-                return copyDirectory(System.IO.Path.Combine(sourcePath, d.Name), System.IO.Path.Combine(destinationPath, d.Name));
-            }
-            return true;
+            //    destinationPath = Path.Combine(destinationPath, temp.Last());
+
+            //    //Copy files in the directory
+            //    foreach (FileInfo f in files)
+            //    {
+            //        f.CopyTo(System.IO.Path.Combine(destinationPath, f.Name));
+            //    }
+            //    //Copy subdirectorys
+            //    DirectoryInfo[] direc = directoryInfo.GetDirectories();
+            //    foreach (DirectoryInfo d in direc)
+            //    {
+            //        copyDirectory(System.IO.Path.Combine(sourcePath, d.Name), destinationPath);
+            //    }
+            //    return true;
+            //}
+            //catch (Exception ex) { }
+            //return false;
+            #endregion
         }
 
         public bool deleteSendToRecycleBin(List<string> listPath)
@@ -143,6 +232,7 @@ namespace TotalCommandder.BLL
                 }
             }
             catch (Exception ex) { }
+
             return false;
         }
 
@@ -161,7 +251,7 @@ namespace TotalCommandder.BLL
 
             //Copy tất cả các file trong listPath qua cho thư mục tạm
             foreach (string path in listPath)
-                BLL.ClassBLL.Instances.copyDirectory(path, temp.FullName);
+                BLL.ClassBLL.Instances.copyDirectory(path, temp.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs);
 
             List<string> listPathTemp = new List<string>();//Danh sách tạm để làm đối số cho hàm xóa thư mục tạm
 
@@ -218,6 +308,101 @@ namespace TotalCommandder.BLL
         }
         #endregion
 
+        #region DetailView
 
+        public void showViewDetail(ListView lvMain, string currentPath)
+        {
+            lvMain.Clear();
+            lvMain.LargeImageList.Images.Clear();
+            lvMain.SmallImageList.Images.Clear();
+            lvMain.StateImageList.Images.Clear();
+
+            if (currentPath.Equals("This PC"))
+            {
+
+            }
+            else
+            {
+                //Add Folders
+                string[] folders = Directory.GetDirectories(currentPath);
+
+                lvMain.LargeImageList.Images.Add("FolderIcon", BLL.ShellIcon.GetLargeFolderIcon().ToBitmap());
+
+                foreach (string folder in folders)
+                {
+                    DirectoryInfo info = new DirectoryInfo(folder);
+                    if ((info.Attributes | FileAttributes.Hidden) == info.Attributes || ((info.Attributes | FileAttributes.Temporary) == info.Attributes))
+                        continue;
+                    string Name = info.Name;
+                    string Date = info.CreationTime.ToShortDateString();
+                    string Type = info.GetType().Name;
+                    string[] strItem = new string[3];
+                    strItem[0] = Name;
+                    strItem[1] = Date;
+                    strItem[2] = Type;
+
+                    ListViewItem item = new ListViewItem(strItem);
+                    item.ImageKey = "FolderIcon";
+                    item.Name = Name;
+                    item.Tag = folder;
+
+                    lvMain.Items.Add(item);
+                }
+
+                string[] files = Directory.GetFiles(currentPath);
+
+                foreach (string file in files)
+                {
+                    
+                    FileInfo info = new FileInfo(file);
+                    if (lvMain.LargeImageList.Images[info.Name] == null)
+                        lvMain.LargeImageList.Images.Add(info.Name, BLL.ShellIcon.GetLargeIcon(info.FullName).ToBitmap());
+
+                    if ((info.Attributes | FileAttributes.Hidden) == info.Attributes || ((info.Attributes | FileAttributes.Temporary) == info.Attributes))
+                        continue;
+
+                    string Name = info.Name;
+                    string Date = info.CreationTime.ToShortDateString();
+                    string Type = info.GetType().Name;
+                    double Size = info.Length;
+
+                    string[] Unit = new string[] { "KB", "MB", "GB", "TB" };
+                    int u = 0;
+                    do
+                    {
+                        Size = Size / (Math.Pow(2, 10 * (u + 1)));
+                    } while (Size > 1000 && u < 4);
+
+                    Size = Math.Round(Size, 2);
+
+                    string[] strItem = new string[4];
+                    strItem[0] = Name;
+                    strItem[1] = Date;
+                    strItem[2] = Type;
+                    strItem[3] = Size.ToString();
+
+                    ListViewItem item = new ListViewItem(strItem);
+                    item.ImageKey = info.Name;
+
+                    if (info.Name.Contains('.'))
+                        item.Text = info.Name.Remove(info.Name.LastIndexOf('.'));
+
+                    item.Tag = info.FullName;
+
+                    item.Name = info.Name;
+
+                    lvMain.Items.Add(item);
+                }
+            }
+
+            lvMain.Columns.Add("Name", 200);
+            lvMain.Columns.Add("Date", 100);
+            lvMain.Columns.Add("Type", 100);
+            lvMain.Columns.Add("Size", 100);
+
+            lvMain.View = View.Details;
+        }
+
+        #endregion
     }
 }
