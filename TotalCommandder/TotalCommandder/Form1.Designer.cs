@@ -47,6 +47,8 @@
             this.btnPermanentlyDelete = new DevExpress.XtraBars.BarButtonItem();
             this.btnNotepad = new DevExpress.XtraBars.BarButtonItem();
             this.btnFind = new DevExpress.XtraBars.BarButtonItem();
+            this.btnReviewFind = new DevExpress.XtraBars.BarButtonItem();
+            this.barButtonItem1 = new DevExpress.XtraBars.BarButtonItem();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.Group2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPage2 = new DevExpress.XtraBars.Ribbon.RibbonPage();
@@ -66,13 +68,11 @@
             this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitMain = new System.Windows.Forms.SplitContainer();
             this.timer = new System.Windows.Forms.Timer(this.components);
-            this.popupMenu1 = new DevExpress.XtraBars.PopupMenu(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).BeginInit();
             this.contextMenu.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitMain)).BeginInit();
             this.splitMain.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.popupMenu1)).BeginInit();
             this.SuspendLayout();
             // 
             // ribbonControl1
@@ -96,10 +96,12 @@
             this.btnRecycleDelete,
             this.btnPermanentlyDelete,
             this.btnNotepad,
-            this.btnFind});
+            this.btnFind,
+            this.btnReviewFind,
+            this.barButtonItem1});
             this.ribbonControl1.Location = new System.Drawing.Point(0, 0);
             this.ribbonControl1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.ribbonControl1.MaxItemId = 18;
+            this.ribbonControl1.MaxItemId = 26;
             this.ribbonControl1.Name = "ribbonControl1";
             this.ribbonControl1.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.ribbonPage1,
@@ -243,10 +245,28 @@
             // btnFind
             // 
             this.btnFind.Caption = "Find";
-            this.btnFind.Glyph = global::TotalCommandder.Properties.Resources.find_16x16;
-            this.btnFind.Id = 17;
+            this.btnFind.Id = 23;
             this.btnFind.LargeGlyph = global::TotalCommandder.Properties.Resources.find_32x32;
             this.btnFind.Name = "btnFind";
+            this.btnFind.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnFind_ItemClick);
+            // 
+            // btnReviewFind
+            // 
+            this.btnReviewFind.Caption = "Review Find";
+            this.btnReviewFind.Enabled = false;
+            this.btnReviewFind.Glyph = ((System.Drawing.Image)(resources.GetObject("btnReviewFind.Glyph")));
+            this.btnReviewFind.Id = 24;
+            this.btnReviewFind.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("btnReviewFind.LargeGlyph")));
+            this.btnReviewFind.Name = "btnReviewFind";
+            this.btnReviewFind.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnReviewFind_ItemClick);
+            // 
+            // barButtonItem1
+            // 
+            this.barButtonItem1.Caption = "Send Mail";
+            this.barButtonItem1.Glyph = global::TotalCommandder.Properties.Resources.emailtemplate_16x16;
+            this.barButtonItem1.Id = 25;
+            this.barButtonItem1.LargeGlyph = global::TotalCommandder.Properties.Resources.emailtemplate_32x32;
+            this.barButtonItem1.Name = "barButtonItem1";
             // 
             // ribbonPage1
             // 
@@ -265,10 +285,12 @@
             this.Group2.ItemLinks.Add(this.btnPaste);
             this.Group2.ItemLinks.Add(this.btnDelete, true);
             this.Group2.ItemLinks.Add(this.btnRename);
-            this.Group2.ItemLinks.Add(this.btnFind);
+            this.Group2.ItemLinks.Add(this.btnFind, true);
+            this.Group2.ItemLinks.Add(this.btnReviewFind);
             this.Group2.ItemLinks.Add(this.btnPack, true);
             this.Group2.ItemLinks.Add(this.btnUnPack);
             this.Group2.ItemLinks.Add(this.btnNotepad);
+            this.Group2.ItemLinks.Add(this.barButtonItem1);
             this.Group2.ItemLinks.Add(this.btnSelectAll, true);
             this.Group2.ItemLinks.Add(this.btnNoneSelect);
             this.Group2.Name = "Group2";
@@ -405,17 +427,12 @@
             this.splitMain.Location = new System.Drawing.Point(0, 155);
             this.splitMain.Name = "splitMain";
             this.splitMain.Size = new System.Drawing.Size(1392, 593);
-            this.splitMain.SplitterDistance = 679;
+            this.splitMain.SplitterDistance = 696;
             this.splitMain.TabIndex = 4;
             // 
             // timer
             // 
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
-            // 
-            // popupMenu1
-            // 
-            this.popupMenu1.Name = "popupMenu1";
-            this.popupMenu1.Ribbon = this.ribbonControl1;
             // 
             // Form1
             // 
@@ -430,7 +447,7 @@
             this.Name = "Form1";
             this.Ribbon = this.ribbonControl1;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "My Total Commander - 15520994";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).EndInit();
             this.contextMenu.ResumeLayout(false);
@@ -438,7 +455,6 @@
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitMain)).EndInit();
             this.splitMain.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.popupMenu1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -477,13 +493,14 @@
         private DevExpress.XtraBars.BarButtonItem btnSelectAll;
         private DevExpress.XtraBars.BarButtonItem btnNoneSelect;
         private System.Windows.Forms.Timer timer;
-        private DevExpress.XtraBars.PopupMenu popupMenu1;
         private DevExpress.XtraBars.BarSubItem btnDelete;
         private DevExpress.XtraBars.BarButtonItem btnRecycleDelete;
         private DevExpress.XtraBars.BarButtonItem btnPermanentlyDelete;
         private DevExpress.XtraBars.BarButtonItem btnNotepad;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup Group2;
         private DevExpress.XtraBars.BarButtonItem btnFind;
+        private DevExpress.XtraBars.BarButtonItem btnReviewFind;
+        private DevExpress.XtraBars.BarButtonItem barButtonItem1;
     }
 }
 

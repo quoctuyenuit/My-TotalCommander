@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ionic.Zip;
 using System.Drawing;
+using System.Net.Mail;
+using System.Net;
 
 namespace TotalCommandder.BLL
 {
@@ -32,6 +34,7 @@ namespace TotalCommandder.BLL
             string text = ((string.IsNullOrEmpty(drive.VolumeLabel)) ? "Local Drive" : drive.VolumeLabel) + " (" + drive.Name + ")";
 
             lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeIcon(drive.Name).ToBitmap());
+            lvMain.SmallImageList.Images.Add(BLL.ShellIcon.GetLargeIcon(drive.Name).ToBitmap());
 
             ListViewItem item;
 
@@ -64,42 +67,78 @@ namespace TotalCommandder.BLL
         public void showDirectory(DirectoryInfo directoryInfo, ListView lvMain)
         {
             lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeFolderIcon().ToBitmap());
-            ListViewItem item;
+            lvMain.SmallImageList.Images.Add(BLL.ShellIcon.GetLargeFolderIcon().ToBitmap());
             
-            if (lvMain.View == View.Tile)
-                item = new ListViewItem(directoryInfo.Name);
-            else
-            {
-                string[] strItem = new string[3];
-                strItem[0] = directoryInfo.Name;
-                strItem[1] = directoryInfo.CreationTime.ToShortDateString() + " " + directoryInfo.CreationTime.ToLongTimeString();
-                strItem[2] = directoryInfo.GetType().Name;
-
-                item = new ListViewItem(strItem);
-            }
+            ListViewItem item= new ListViewItem(directoryInfo.Name);
 
             item.Name = directoryInfo.Name;
-
+            
             item.ImageIndex = lvMain.LargeImageList.Images.Count - 1;
-
+            
             item.Tag = directoryInfo.FullName;
+
+            if (lvMain.View == View.Details)
+            {
+                string[] strItem = new string[2];
+                strItem[0] = directoryInfo.CreationTime.ToShortDateString() + " " + directoryInfo.CreationTime.ToLongTimeString();
+                strItem[1] = directoryInfo.GetType().Name;
+
+                item.SubItems.AddRange(strItem);
+            }
+            
 
             lvMain.Items.Add(item);
         }
 
+        private Bitmap readImage(string path, int width, int height)
+        {
+            Bitmap bmp = new Bitmap(width, height);
+
+            Image image = Image.FromFile(path);
+
+            Graphics g = Graphics.FromImage(bmp);
+
+            g.DrawImage(image, new Rectangle(0, 0, width, height));
+
+            image.Dispose();
+
+            return bmp;
+        }
+
         public void showFile(FileInfo fileInfo, ListView lvMain)
         {
-            lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeIconFromExtension(fileInfo.FullName).ToBitmap());
+            string[] ImageExtension = new string[] { ".bmp", ".ico", ".gif", ".jpeg", ".jpg", ".jfif",".png", ".tif", ".tiff", ".wmf", ".emf" };
 
-            ListViewItem item;// = new ListViewItem(fileInfo.Name, lvMain.LargeImageList.Images.Count - 1);
 
-            if (lvMain.View == View.Tile)
+            ListViewItem item =  new ListViewItem();
+
+            item.Name = fileInfo.Name;
+
+            if (fileInfo.Name.Contains('.'))
+                item.Text = fileInfo.Name.Remove(fileInfo.Name.LastIndexOf('.'));
+            else
+                item.Text = fileInfo.Name;
+
+            item.Tag = fileInfo.FullName;
+
+            if (lvMain.View == View.Tile || lvMain.View == View.LargeIcon)
             {
-                item = new ListViewItem();
+                if (ImageExtension.Contains(fileInfo.Extension.ToLower()))
+                {
+                    lvMain.LargeImageList.Images.Add(readImage(fileInfo.FullName,lvMain.LargeImageList.ImageSize.Width, lvMain.LargeImageList.ImageSize.Height ));
+                }
+                else
+                    lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeIconFromExtension(fileInfo.FullName).ToBitmap());
 
-                
             }
             else
+            {
+                lvMain.SmallImageList.Images.Add(BLL.ShellIcon.GetLargeIconFromExtension(fileInfo.FullName).ToBitmap());
+                
+                lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeIconFromExtension(fileInfo.FullName).ToBitmap());
+            }
+
+            if (lvMain.View == View.Details)
             {
                 double fileSize = fileInfo.Length;
 
@@ -112,31 +151,50 @@ namespace TotalCommandder.BLL
 
                 fileSize = Math.Round(fileSize, 2);
 
-                string[] strItem = new string[4];
-                strItem[0] = fileInfo.Name;
-                strItem[1] = fileInfo.CreationTime.ToShortDateString() + " "+ fileInfo.CreationTime.ToLongTimeString();
-                strItem[2] = fileInfo.GetType().Name;
-                strItem[3] = fileSize.ToString() + Unit[u];
+                string[] strItem = new string[3];
+                strItem[0] = fileInfo.CreationTime.ToShortDateString() + " " + fileInfo.CreationTime.ToLongTimeString();
+                strItem[1] = fileInfo.GetType().Name;
+                strItem[2] = fileSize.ToString() + Unit[u];
 
-                item = new ListViewItem(strItem);
+                item.SubItems.AddRange(strItem);
+
             }
 
-            item.Name = fileInfo.Name;
-
-            if (fileInfo.Name.Contains('.'))
-                item.Text = fileInfo.Name.Remove(fileInfo.Name.LastIndexOf('.'));
-            else
-                item.Text = fileInfo.Name;
-
             item.ImageIndex = lvMain.LargeImageList.Images.Count - 1;
-
-            item.Tag = fileInfo.FullName;
 
             lvMain.Items.Add(item);
         }
 
-       
-        public bool copyDirectory(string sourcePath, string destinationPath,Microsoft.VisualBasic.FileIO.UIOption UI = Microsoft.VisualBasic.FileIO.UIOption.AllDialogs )
+        //Hiển thị danh sách các item vào listView
+        public void showDirectoryAndFiles(List<string> listPath, ListView lvMain)//Hiển thị các thư mục và các file hiện tại, hàm trả về đường dẫn mới
+        {
+            try
+            {
+                lvMain.LargeImageList.Images.Clear();
+                lvMain.SmallImageList.Images.Clear();
+                lvMain.Clear();
+
+                if (lvMain.View == View.Details)
+                {
+                    lvMain.Columns.Add("Name", 200);
+                    lvMain.Columns.Add("Date modified", 150);
+                    lvMain.Columns.Add("Type", 150);
+                    lvMain.Columns.Add("Size", 150);
+                }
+
+                foreach (string item in listPath)
+                {
+                    if (Directory.Exists(item))
+                        showDirectory(Microsoft.VisualBasic.FileIO.FileSystem.GetDirectoryInfo(item), lvMain);
+                    else
+                        showFile(Microsoft.VisualBasic.FileIO.FileSystem.GetFileInfo(item), lvMain);
+                }
+
+            }
+            catch (Exception ex) { }
+        }
+
+        public bool copyAction(string sourcePath, string destinationPath, Microsoft.VisualBasic.FileIO.UIOption UI = Microsoft.VisualBasic.FileIO.UIOption.AllDialogs)
         {
             try
             {
@@ -194,6 +252,24 @@ namespace TotalCommandder.BLL
             #endregion
         }
 
+        public bool moveAction(string sourcePath, string destinationPath, Microsoft.VisualBasic.FileIO.UIOption UI = Microsoft.VisualBasic.FileIO.UIOption.AllDialogs)
+        {
+            try
+            {
+                destinationPath = Path.Combine(destinationPath, Path.Combine(destinationPath, sourcePath.Substring(sourcePath.LastIndexOf('\\') + 1)));
+
+                if (Directory.Exists(sourcePath))
+                    Microsoft.VisualBasic.FileIO.FileSystem.MoveDirectory(sourcePath, destinationPath, UI, Microsoft.VisualBasic.FileIO.UICancelOption.ThrowException);
+                else
+                    Microsoft.VisualBasic.FileIO.FileSystem.MoveFile(sourcePath, destinationPath, UI, Microsoft.VisualBasic.FileIO.UICancelOption.ThrowException);
+                return true;
+            }
+            catch (Exception ex) { }
+
+            return false;
+
+        }
+
         public bool deleteSendToRecycleBin(List<string> listPath)
         {
             try
@@ -236,6 +312,50 @@ namespace TotalCommandder.BLL
             return false;
         }
 
+        public List<string> findAction(string path, string name)
+        {
+            try
+            {
+                List<string> result = new List<string>();
+
+                foreach (string folder in Microsoft.VisualBasic.FileIO.FileSystem.GetDirectories(path))
+                {
+                    DirectoryInfo direcryInfo = Microsoft.VisualBasic.FileIO.FileSystem.GetDirectoryInfo(folder);
+
+                    if (((direcryInfo.Attributes | FileAttributes.Hidden) == direcryInfo.Attributes) || ((direcryInfo.Attributes | FileAttributes.Temporary) == direcryInfo.Attributes))
+                        continue;
+
+                    result.AddRange(findAction(folder, name));
+
+                    string nameFile = direcryInfo.Name;
+
+                    if (nameFile.ToLower().Contains(name.ToLower()))
+                        result.Add(folder);
+                }
+
+                foreach (string file in Microsoft.VisualBasic.FileIO.FileSystem.GetFiles(path))
+                {
+
+                    FileInfo fileInfo = Microsoft.VisualBasic.FileIO.FileSystem.GetFileInfo(file);
+
+                    if (((fileInfo.Attributes | FileAttributes.Hidden) == fileInfo.Attributes) || ((fileInfo.Attributes | FileAttributes.Temporary) == fileInfo.Attributes))
+                        continue;
+
+                    string nameFile = fileInfo.Name;
+
+                    if (nameFile.Contains('.'))
+                        nameFile = nameFile.Remove(nameFile.LastIndexOf('.'));
+
+                    if (nameFile.ToLower().Contains(name.ToLower()))
+                        result.Add(file);
+                }
+
+                return result;
+            }
+            catch (Exception ex) { }
+            return new List<string>();
+        }
+
         #endregion
 
         #region packing
@@ -251,7 +371,7 @@ namespace TotalCommandder.BLL
 
             //Copy tất cả các file trong listPath qua cho thư mục tạm
             foreach (string path in listPath)
-                BLL.ClassBLL.Instances.copyDirectory(path, temp.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs);
+                BLL.ClassBLL.Instances.copyAction(path, temp.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs);
 
             List<string> listPathTemp = new List<string>();//Danh sách tạm để làm đối số cho hàm xóa thư mục tạm
 
@@ -353,7 +473,7 @@ namespace TotalCommandder.BLL
 
                 foreach (string file in files)
                 {
-                    
+
                     FileInfo info = new FileInfo(file);
                     if (lvMain.LargeImageList.Images[info.Name] == null)
                         lvMain.LargeImageList.Images.Add(info.Name, BLL.ShellIcon.GetLargeIcon(info.FullName).ToBitmap());
@@ -404,5 +524,43 @@ namespace TotalCommandder.BLL
         }
 
         #endregion
+
+        #region Mail
+
+        public bool sendMail(string mailFrom, string password, string mailTo, string subject, string cc, List<string> attachFile, string bodyMail)
+        {
+            try
+            {
+
+                SmtpClient mailclient = new SmtpClient("smtp.gmail.com", 587);
+
+                mailclient.EnableSsl = true;
+
+                mailclient.Credentials = new NetworkCredential(mailFrom, password);
+
+                MailMessage message = new MailMessage(mailFrom, mailTo);
+
+                message.Subject = subject;
+
+                message.Body = bodyMail;
+
+                foreach (string item in attachFile)
+                    message.Attachments.Add(new Attachment(item));
+
+                if (!string.IsNullOrEmpty(cc))
+                    message.CC.Add(new MailAddress(cc));
+
+                mailclient.Send(message);
+
+                MessageBox.Show("New password was sent to " + mailTo, "Note", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                return true;
+            }
+            catch (Exception ex) { }
+            return false;
+        }
+
+        #endregion
+
     }
 }

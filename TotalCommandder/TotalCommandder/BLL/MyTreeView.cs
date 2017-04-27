@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -121,7 +122,7 @@ namespace TotalCommandder.BLL
                 TreeNode driveNode = new TreeNode();
                 driveNode.Name = drive.Name;
                 driveNode.Text = name;
-                treeView.ImageList.Images.Add(drive.Name, BLL.ShellIcon.GetLargeIcon(drive.Name));
+                treeView.ImageList.Images.Add(drive.Name,BLL.ShellIcon.GetLargeIcon(drive.Name));
                 driveNode.ImageKey = drive.Name;
                 driveNode.SelectedImageKey = drive.Name;
                 driveNode.Tag = drive.Name;

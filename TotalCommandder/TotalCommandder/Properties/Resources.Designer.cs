@@ -143,6 +143,26 @@ namespace TotalCommandder.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap emailtemplate_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("emailtemplate_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap emailtemplate_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("emailtemplate_32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap find_16x16 {
             get {
                 object obj = ResourceManager.GetObject("find_16x16", resourceCulture);
@@ -296,6 +316,16 @@ namespace TotalCommandder.Properties {
         internal static System.Drawing.Bitmap selecttable_32x32 {
             get {
                 object obj = ResourceManager.GetObject("selecttable_32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap show_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("show_32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

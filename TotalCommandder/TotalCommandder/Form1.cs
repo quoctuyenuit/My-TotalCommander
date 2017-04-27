@@ -17,6 +17,7 @@ namespace TotalCommandder
 
         private GUI.uc_DirectoryList gui2;
         private Task task;
+        private List<string> listReviewFind;
 
         public Form1()
         {
@@ -84,19 +85,17 @@ namespace TotalCommandder
         //Xử lý khi người dùng paste
         public void pasteAction(string pastePath)
         {
-            foreach (string path in this.listCopyPath)
-                if (!BLL.ClassBLL.Instances.copyDirectory(path, pastePath))
-                    return;
-
-            if (!isCopy)//Nếu là chức năng Cut thì xóa bản cũ
+            if (isCopy)
             {
                 foreach (string path in this.listCopyPath)
-                {
-                    if (Directory.Exists(path))
-                        Directory.Delete(path, true);
-                    else
-                        File.Delete(path);
-                }
+                    if (!BLL.ClassBLL.Instances.copyAction(path, pastePath))
+                        return;
+            }
+            else
+            {
+                foreach (string path in this.listCopyPath)
+                    if (!BLL.ClassBLL.Instances.moveAction(path, pastePath))
+                        return;
 
                 this.isCopy = true;
 
@@ -242,7 +241,7 @@ namespace TotalCommandder
         private void btnCopy_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             btnPaste.Enabled = true;
-
+            
             this.listCopyPath.Clear();
 
             if (this.gui1.LvMain.Focused)
@@ -452,6 +451,52 @@ namespace TotalCommandder
             {
                 MessageBox.Show("Soory! Can't open notepad now!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnFind_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            Find.FindForm findForm;
+
+            if (this.gui1.LvMain.Focused)
+            {
+                string pathCurrent = this.gui1.ListBack.Peek();
+
+                if (pathCurrent.Equals("This PC"))
+                    pathCurrent = "C:\\";
+
+                findForm = new Find.FindForm(pathCurrent);
+            }
+            else
+            {
+                string pathCurrent = this.gui2.ListBack.Peek();
+
+                if (pathCurrent.Equals("This PC"))
+                    pathCurrent = "C:\\";
+
+                findForm = new Find.FindForm(pathCurrent);
+            }
+
+            if (findForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (findForm.listResultPath.Count > 0)
+                {
+                    this.gui1.CbPath.Text = "Search Results in " + findForm.pathCurrent;
+
+                    BLL.ClassBLL.Instances.showDirectoryAndFiles(findForm.listResultPath, this.gui1.LvMain);
+
+                    this.listReviewFind = findForm.listResultPath;
+
+                    this.btnReviewFind.Enabled = true;
+                }
+                else
+                    MessageBox.Show("No items match your search!", "Note", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void btnReviewFind_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            BLL.ClassBLL.Instances.showDirectoryAndFiles(this.listReviewFind, this.gui1.LvMain);
+            this.gui1.CbPath.Text = "Search Results";
         }
 
         

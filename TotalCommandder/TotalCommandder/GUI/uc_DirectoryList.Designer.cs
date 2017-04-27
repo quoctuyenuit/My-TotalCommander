@@ -35,10 +35,13 @@
             this.btnForward = new DevExpress.XtraBars.BarButtonItem();
             this.btnUpTo = new DevExpress.XtraBars.BarButtonItem();
             this.chkNavigationPane = new DevExpress.XtraBars.BarCheckItem();
-            this.chkDetailView = new DevExpress.XtraBars.BarCheckItem();
-            this.chkTilesView = new DevExpress.XtraBars.BarCheckItem();
             this.btnRefresh = new DevExpress.XtraBars.BarButtonItem();
-            this.barSubItem1 = new DevExpress.XtraBars.BarSubItem();
+            this.btnView = new DevExpress.XtraBars.BarSubItem();
+            this.btnViewLarge = new DevExpress.XtraBars.BarCheckItem();
+            this.btnViewSmall = new DevExpress.XtraBars.BarCheckItem();
+            this.btnViewList = new DevExpress.XtraBars.BarCheckItem();
+            this.btnViewDetail = new DevExpress.XtraBars.BarCheckItem();
+            this.btnViewTiles = new DevExpress.XtraBars.BarCheckItem();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.ribbonPageGroup1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
@@ -48,7 +51,6 @@
             this.tvMain = new System.Windows.Forms.TreeView();
             this.imListTreeView = new System.Windows.Forms.ImageList(this.components);
             this.lvMain = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuItemOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemRefresh = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,8 +66,6 @@
             this.subMenuItemNewTextDocument = new System.Windows.Forms.ToolStripMenuItem();
             this.imList = new System.Windows.Forms.ImageList(this.components);
             this.timer = new System.Windows.Forms.Timer(this.components);
-            this.btnSortName = new DevExpress.XtraBars.BarButtonItem();
-            this.btnSortDate = new DevExpress.XtraBars.BarButtonItem();
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cbPath.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitUserControl)).BeginInit();
@@ -84,14 +84,15 @@
             this.btnForward,
             this.btnUpTo,
             this.chkNavigationPane,
-            this.chkDetailView,
-            this.chkTilesView,
             this.btnRefresh,
-            this.barSubItem1,
-            this.btnSortName,
-            this.btnSortDate});
+            this.btnView,
+            this.btnViewDetail,
+            this.btnViewTiles,
+            this.btnViewList,
+            this.btnViewSmall,
+            this.btnViewLarge});
             this.ribbonControl1.Location = new System.Drawing.Point(0, 0);
-            this.ribbonControl1.MaxItemId = 14;
+            this.ribbonControl1.MaxItemId = 28;
             this.ribbonControl1.Name = "ribbonControl1";
             this.ribbonControl1.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.ribbonPage1});
@@ -100,6 +101,7 @@
             this.ribbonControl1.ShowToolbarCustomizeItem = false;
             this.ribbonControl1.Size = new System.Drawing.Size(1168, 38);
             this.ribbonControl1.Toolbar.ShowCustomizeItem = false;
+            this.ribbonControl1.Click += new System.EventHandler(this.ribbonControl1_Click);
             // 
             // btnBack
             // 
@@ -134,24 +136,6 @@
             this.chkNavigationPane.Name = "chkNavigationPane";
             this.chkNavigationPane.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.chkNavigationPane_ItemClick);
             // 
-            // chkDetailView
-            // 
-            this.chkDetailView.Caption = "Detail";
-            this.chkDetailView.Glyph = global::TotalCommandder.Properties.Resources.listViewIcon;
-            this.chkDetailView.Id = 7;
-            this.chkDetailView.Name = "chkDetailView";
-            this.chkDetailView.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.chkDetailView_ItemClick);
-            // 
-            // chkTilesView
-            // 
-            this.chkTilesView.BindableChecked = true;
-            this.chkTilesView.Caption = "Tiles";
-            this.chkTilesView.Checked = true;
-            this.chkTilesView.Glyph = global::TotalCommandder.Properties.Resources.tilesViewIcon;
-            this.chkTilesView.Id = 8;
-            this.chkTilesView.Name = "chkTilesView";
-            this.chkTilesView.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.chkTilesView_ItemClick);
-            // 
             // btnRefresh
             // 
             this.btnRefresh.Glyph = global::TotalCommandder.Properties.Resources.recurrence_32x32;
@@ -159,15 +143,55 @@
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnRefresh_ItemClick);
             // 
-            // barSubItem1
+            // btnView
             // 
-            this.barSubItem1.Caption = "Sort";
-            this.barSubItem1.Glyph = global::TotalCommandder.Properties.Resources.sortasc_32x32;
-            this.barSubItem1.Id = 11;
-            this.barSubItem1.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] {
-            new DevExpress.XtraBars.LinkPersistInfo(this.btnSortName),
-            new DevExpress.XtraBars.LinkPersistInfo(this.btnSortDate)});
-            this.barSubItem1.Name = "barSubItem1";
+            this.btnView.Caption = "View";
+            this.btnView.Glyph = global::TotalCommandder.Properties.Resources.show_32x32;
+            this.btnView.Id = 19;
+            this.btnView.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] {
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnViewLarge),
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnViewSmall),
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnViewList),
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnViewDetail),
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnViewTiles)});
+            this.btnView.Name = "btnView";
+            // 
+            // btnViewLarge
+            // 
+            this.btnViewLarge.Caption = "Large Icons";
+            this.btnViewLarge.Id = 27;
+            this.btnViewLarge.Name = "btnViewLarge";
+            this.btnViewLarge.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnViewLarge_ItemClick);
+            // 
+            // btnViewSmall
+            // 
+            this.btnViewSmall.Caption = "Small Icons";
+            this.btnViewSmall.Id = 25;
+            this.btnViewSmall.Name = "btnViewSmall";
+            this.btnViewSmall.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnViewSmall_ItemClick);
+            // 
+            // btnViewList
+            // 
+            this.btnViewList.Caption = "List";
+            this.btnViewList.Id = 24;
+            this.btnViewList.Name = "btnViewList";
+            this.btnViewList.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnViewList_ItemClick);
+            // 
+            // btnViewDetail
+            // 
+            this.btnViewDetail.BindableChecked = true;
+            this.btnViewDetail.Caption = "Detail";
+            this.btnViewDetail.Checked = true;
+            this.btnViewDetail.Id = 21;
+            this.btnViewDetail.Name = "btnViewDetail";
+            this.btnViewDetail.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnViewDetail_ItemClick);
+            // 
+            // btnViewTiles
+            // 
+            this.btnViewTiles.Caption = "Tiles";
+            this.btnViewTiles.Id = 22;
+            this.btnViewTiles.Name = "btnViewTiles";
+            this.btnViewTiles.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnViewTiles_ItemClick);
             // 
             // ribbonPage1
             // 
@@ -195,9 +219,7 @@
             // 
             // ribbonPageGroup3
             // 
-            this.ribbonPageGroup3.ItemLinks.Add(this.chkDetailView);
-            this.ribbonPageGroup3.ItemLinks.Add(this.chkTilesView);
-            this.ribbonPageGroup3.ItemLinks.Add(this.barSubItem1, true);
+            this.ribbonPageGroup3.ItemLinks.Add(this.btnView);
             this.ribbonPageGroup3.Name = "ribbonPageGroup3";
             this.ribbonPageGroup3.Text = "ribbonPageGroup3";
             // 
@@ -237,6 +259,7 @@
             // tvMain
             // 
             this.tvMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvMain.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tvMain.FullRowSelect = true;
             this.tvMain.HideSelection = false;
             this.tvMain.ImageIndex = 0;
@@ -259,22 +282,18 @@
             // lvMain
             // 
             this.lvMain.AllowDrop = true;
-            this.lvMain.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
             this.lvMain.ContextMenuStrip = this.contextMenu;
             this.lvMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvMain.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvMain.LabelEdit = true;
-            this.lvMain.LabelWrap = false;
             this.lvMain.LargeImageList = this.imList;
             this.lvMain.Location = new System.Drawing.Point(0, 0);
             this.lvMain.Name = "lvMain";
             this.lvMain.Size = new System.Drawing.Size(846, 608);
             this.lvMain.SmallImageList = this.imList;
             this.lvMain.TabIndex = 0;
-            this.lvMain.TileSize = new System.Drawing.Size(500, 40);
             this.lvMain.UseCompatibleStateImageBehavior = false;
-            this.lvMain.View = System.Windows.Forms.View.Tile;
-            this.lvMain.VirtualListSize = 278;
+            this.lvMain.View = System.Windows.Forms.View.Details;
             this.lvMain.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lvMain_AfterLabelEdit);
             this.lvMain.BeforeLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lvMain_BeforeLabelEdit);
             this.lvMain.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lvMain_ItemDrag);
@@ -415,18 +434,6 @@
             // 
             this.timer.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // btnSortName
-            // 
-            this.btnSortName.Caption = "Name";
-            this.btnSortName.Id = 12;
-            this.btnSortName.Name = "btnSortName";
-            // 
-            // btnSortDate
-            // 
-            this.btnSortDate.Caption = "Date";
-            this.btnSortDate.Id = 13;
-            this.btnSortDate.Name = "btnSortDate";
-            // 
             // uc_DirectoryList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -467,7 +474,6 @@
         }
         private System.Windows.Forms.SplitContainer splitUserControl;
         private System.Windows.Forms.TreeView tvMain;
-        private System.Windows.Forms.ListView lvMain;
 
         public System.Windows.Forms.ListView LvMain
         {
@@ -475,7 +481,6 @@
             set { lvMain = value; }
         }
         private System.Windows.Forms.ImageList imList;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem menuItemOpen;
         private System.Windows.Forms.ToolStripMenuItem menuItemCopy;
@@ -492,13 +497,15 @@
         private System.Windows.Forms.ToolStripMenuItem subMenuItemNewTextDocument;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private DevExpress.XtraBars.BarCheckItem chkNavigationPane;
-        private DevExpress.XtraBars.BarCheckItem chkDetailView;
-        private DevExpress.XtraBars.BarCheckItem chkTilesView;
         private System.Windows.Forms.Timer timer;
         private DevExpress.XtraBars.BarButtonItem btnRefresh;
         private System.Windows.Forms.ToolStripMenuItem menuItemRefresh;
-        private DevExpress.XtraBars.BarSubItem barSubItem1;
-        private DevExpress.XtraBars.BarButtonItem btnSortName;
-        private DevExpress.XtraBars.BarButtonItem btnSortDate;
+        private System.Windows.Forms.ListView lvMain;
+        private DevExpress.XtraBars.BarSubItem btnView;
+        private DevExpress.XtraBars.BarCheckItem btnViewLarge;
+        private DevExpress.XtraBars.BarCheckItem btnViewSmall;
+        private DevExpress.XtraBars.BarCheckItem btnViewList;
+        private DevExpress.XtraBars.BarCheckItem btnViewDetail;
+        private DevExpress.XtraBars.BarCheckItem btnViewTiles;
     }
 }
