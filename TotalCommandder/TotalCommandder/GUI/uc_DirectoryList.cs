@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace TotalCommandder.GUI
 {
@@ -83,6 +84,8 @@ namespace TotalCommandder.GUI
         public uc_DirectoryList(ContextMenuStrip contextMenu)
         {
             InitializeComponent();
+
+
             this.listBack = new Stack<string>();
 
             this.listForward = new Stack<string>();

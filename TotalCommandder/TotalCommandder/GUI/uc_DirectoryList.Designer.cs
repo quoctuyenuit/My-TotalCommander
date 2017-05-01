@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_DirectoryList));
             this.ribbonControl1 = new DevExpress.XtraBars.Ribbon.RibbonControl();
             this.btnBack = new DevExpress.XtraBars.BarButtonItem();
@@ -48,10 +47,10 @@
             this.ribbonPageGroup3 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.cbPath = new DevExpress.XtraEditors.ComboBoxEdit();
             this.splitUserControl = new System.Windows.Forms.SplitContainer();
-            this.tvMain = new System.Windows.Forms.TreeView();
-            this.imListTreeView = new System.Windows.Forms.ImageList(this.components);
+            this.tvMain = new NavigationPane();
+            this.imListTreeView = new System.Windows.Forms.ImageList();
             this.lvMain = new System.Windows.Forms.ListView();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip();
             this.menuItemOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemPack = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,8 +63,8 @@
             this.subMenuItemNewFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.subMenuItemNewTextDocument = new System.Windows.Forms.ToolStripMenuItem();
-            this.imList = new System.Windows.Forms.ImageList(this.components);
-            this.timer = new System.Windows.Forms.Timer(this.components);
+            this.imList = new System.Windows.Forms.ImageList();
+            this.timer = new System.Windows.Forms.Timer();
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cbPath.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitUserControl)).BeginInit();
@@ -285,6 +284,7 @@
             this.lvMain.ContextMenuStrip = this.contextMenu;
             this.lvMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvMain.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lvMain.FullRowSelect = true;
             this.lvMain.LabelEdit = true;
             this.lvMain.LargeImageList = this.imList;
             this.lvMain.Location = new System.Drawing.Point(0, 0);
@@ -473,7 +473,7 @@
             set { cbPath = value; }
         }
         private System.Windows.Forms.SplitContainer splitUserControl;
-        private System.Windows.Forms.TreeView tvMain;
+        private NavigationPane tvMain;
 
         public System.Windows.Forms.ListView LvMain
         {

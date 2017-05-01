@@ -138,6 +138,9 @@
     <Compile Include="Mail\SendMailForm.Designer.cs">
       <DependentUpon>SendMailForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NavigationPane.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Packing\PackingForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.ribbonControl1 = new DevExpress.XtraBars.Ribbon.RibbonControl();
             this.btnPack = new DevExpress.XtraBars.BarButtonItem();
@@ -52,7 +51,7 @@
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.Group2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPage2 = new DevExpress.XtraBars.Ribbon.RibbonPage();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip();
             this.menuItemOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemCut = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,7 +66,7 @@
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitMain = new System.Windows.Forms.SplitContainer();
-            this.timer = new System.Windows.Forms.Timer(this.components);
+            this.timer = new System.Windows.Forms.Timer();
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).BeginInit();
             this.contextMenu.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -154,6 +153,7 @@
             this.chkTwoScreen.Id = 8;
             this.chkTwoScreen.LargeGlyph = global::TotalCommandder.Properties.Resources.twoScreenIcon;
             this.chkTwoScreen.Name = "chkTwoScreen";
+            this.chkTwoScreen.CheckedChanged += new DevExpress.XtraBars.ItemClickEventHandler(this.chkTwoScreen_CheckedChanged);
             this.chkTwoScreen.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.chkTwoScreen_ItemClick);
             // 
             // btnCopy

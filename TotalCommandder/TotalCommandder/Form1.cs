@@ -499,6 +499,11 @@ namespace TotalCommandder
             this.gui1.CbPath.Text = "Search Results";
         }
 
+        private void chkTwoScreen_CheckedChanged(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+
+        }
+
         
 
        
