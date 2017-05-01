@@ -106,7 +106,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BLL\ClassBLL.cs" />
-    <Compile Include="BLL\MyTreeView.cs" />
     <Compile Include="BLL\ShellIcon.cs" />
     <Compile Include="Find\FindForm.cs">
       <SubType>Form</SubType>

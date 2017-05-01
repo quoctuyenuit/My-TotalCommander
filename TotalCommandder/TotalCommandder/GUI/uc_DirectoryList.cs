@@ -85,6 +85,7 @@ namespace TotalCommandder.GUI
         {
             InitializeComponent();
 
+            this.tvMain.InitializeComponent();
 
             this.listBack = new Stack<string>();
 
@@ -92,7 +93,6 @@ namespace TotalCommandder.GUI
 
             this.contextMenu = contextMenu;
 
-            BLL.MyTreeView.Instances.initTreeView(tvMain);
         }
 
         private void showDrives()
@@ -569,6 +569,7 @@ namespace TotalCommandder.GUI
             else
                 menuItemNew.Enabled = true;
         }
+        
         #endregion
 
         private void lvMain_SelectedIndexChanged(object sender, EventArgs e)
@@ -774,7 +775,7 @@ namespace TotalCommandder.GUI
             if (!nameNode.Equals("MyComputer"))
             {
                 e.Node.Nodes.Clear();
-                BLL.MyTreeView.Instances.AddDirectory(e.Node, tvMain);
+                this.tvMain.AddDirectory(e.Node);
             }
         }
         #endregion
