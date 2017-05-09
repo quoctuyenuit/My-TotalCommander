@@ -134,7 +134,7 @@ namespace TotalCommandder.BLL
             else
             {
                 lvMain.SmallImageList.Images.Add(BLL.ShellIcon.GetLargeIconFromExtension(fileInfo.FullName).ToBitmap());
-                
+
                 lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeIconFromExtension(fileInfo.FullName).ToBitmap());
             }
 
@@ -214,42 +214,6 @@ namespace TotalCommandder.BLL
 
             return false;
 
-            #region MyCodeCopy
-            //try
-            //{
-            //    if (File.Exists(sourcePath))
-            //    {
-            //        FileInfo f = new FileInfo(sourcePath);
-            //        f.CopyTo(destinationPath + @"\" + f.Name);
-            //        return true;
-            //    }
-
-            //    DirectoryInfo directoryInfo = new DirectoryInfo(sourcePath);
-
-            //    string[] temp = sourcePath.Split('\\');
-
-            //    Directory.CreateDirectory(Path.Combine(destinationPath, temp.Last()));
-
-            //    FileInfo[] files = directoryInfo.GetFiles();
-
-            //    destinationPath = Path.Combine(destinationPath, temp.Last());
-
-            //    //Copy files in the directory
-            //    foreach (FileInfo f in files)
-            //    {
-            //        f.CopyTo(System.IO.Path.Combine(destinationPath, f.Name));
-            //    }
-            //    //Copy subdirectorys
-            //    DirectoryInfo[] direc = directoryInfo.GetDirectories();
-            //    foreach (DirectoryInfo d in direc)
-            //    {
-            //        copyDirectory(System.IO.Path.Combine(sourcePath, d.Name), destinationPath);
-            //    }
-            //    return true;
-            //}
-            //catch (Exception ex) { }
-            //return false;
-            #endregion
         }
 
         public bool moveAction(string sourcePath, string destinationPath, Microsoft.VisualBasic.FileIO.UIOption UI = Microsoft.VisualBasic.FileIO.UIOption.AllDialogs)

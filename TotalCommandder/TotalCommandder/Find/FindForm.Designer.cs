@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
             this.txtSearchFor = new DevExpress.XtraEditors.TextEdit();
             this.btnStartSearch = new DevExpress.XtraEditors.SimpleButton();
@@ -37,7 +38,7 @@
             this.panelControl1 = new DevExpress.XtraEditors.PanelControl();
             this.cbSearchIn = new DevExpress.XtraEditors.ComboBoxEdit();
             this.chkSearchInAll = new DevExpress.XtraEditors.CheckEdit();
-            this.timer1 = new System.Windows.Forms.Timer();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.txtStatus = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.txtSearchFor.Properties)).BeginInit();
@@ -65,13 +66,13 @@
             this.txtSearchFor.Name = "txtSearchFor";
             this.txtSearchFor.Properties.Appearance.Font = new System.Drawing.Font("Tahoma", 9F);
             this.txtSearchFor.Properties.Appearance.Options.UseFont = true;
-            this.txtSearchFor.Size = new System.Drawing.Size(417, 24);
+            this.txtSearchFor.Size = new System.Drawing.Size(418, 24);
             this.txtSearchFor.TabIndex = 0;
             // 
             // btnStartSearch
             // 
             this.btnStartSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnStartSearch.Location = new System.Drawing.Point(362, 126);
+            this.btnStartSearch.Location = new System.Drawing.Point(363, 126);
             this.btnStartSearch.Name = "btnStartSearch";
             this.btnStartSearch.Size = new System.Drawing.Size(94, 34);
             this.btnStartSearch.TabIndex = 0;
@@ -90,7 +91,7 @@
             // btnBrowse
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowse.Location = new System.Drawing.Point(462, 40);
+            this.btnBrowse.Location = new System.Drawing.Point(463, 40);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(61, 24);
             this.btnBrowse.TabIndex = 2;
@@ -101,7 +102,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(462, 126);
+            this.btnCancel.Location = new System.Drawing.Point(463, 126);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(94, 34);
             this.btnCancel.TabIndex = 1;
@@ -120,7 +121,7 @@
             this.panelControl1.Controls.Add(this.labelControl1);
             this.panelControl1.Location = new System.Drawing.Point(12, 12);
             this.panelControl1.Name = "panelControl1";
-            this.panelControl1.Size = new System.Drawing.Size(544, 108);
+            this.panelControl1.Size = new System.Drawing.Size(545, 108);
             this.panelControl1.TabIndex = 4;
             // 
             // cbSearchIn
@@ -155,9 +156,9 @@
             this.txtStatus.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.txtStatus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.txtStatus.Location = new System.Drawing.Point(0, 173);
+            this.txtStatus.Location = new System.Drawing.Point(0, 163);
             this.txtStatus.Name = "txtStatus";
-            this.txtStatus.Size = new System.Drawing.Size(568, 25);
+            this.txtStatus.Size = new System.Drawing.Size(569, 25);
             this.txtStatus.TabIndex = 7;
             this.txtStatus.Text = "statusStrip1";
             // 
@@ -174,11 +175,14 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(568, 198);
+            this.ClientSize = new System.Drawing.Size(569, 188);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.panelControl1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnStartSearch);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(587, 235);
+            this.MinimumSize = new System.Drawing.Size(587, 235);
             this.Name = "FindForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

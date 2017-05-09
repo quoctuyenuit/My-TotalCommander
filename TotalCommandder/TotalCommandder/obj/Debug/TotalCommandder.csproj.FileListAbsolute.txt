@@ -64,4 +64,3 @@ C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\b
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Debug\DevExpress.CodeRush.VSCore.xml
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Debug\DevExpress.DXCore.MetaData.xml
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Debug\DevExpress.DXCore.Parser.xml
-C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Debug\TotalCommandder.Mail.SendMailForm.resources

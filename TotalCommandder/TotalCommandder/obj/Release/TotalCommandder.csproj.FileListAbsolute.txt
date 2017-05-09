@@ -42,4 +42,3 @@ C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\b
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Release\DevExpress.CodeRush.VSCore.xml
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Release\DevExpress.DXCore.MetaData.xml
 C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\bin\Release\DevExpress.DXCore.Parser.xml
-C:\Users\QuocTuyen\Documents\My-TotalCommander\TotalCommandder\TotalCommandder\obj\Release\TotalCommandder.Mail.SendMailForm.resources

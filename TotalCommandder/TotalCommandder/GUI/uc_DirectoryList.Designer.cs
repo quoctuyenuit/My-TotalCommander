@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_DirectoryList));
             this.ribbonControl1 = new DevExpress.XtraBars.Ribbon.RibbonControl();
             this.btnBack = new DevExpress.XtraBars.BarButtonItem();
@@ -45,27 +46,37 @@
             this.ribbonPageGroup1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup3 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.repositoryItemComboBox1 = new DevExpress.XtraEditors.Repository.RepositoryItemComboBox();
             this.cbPath = new DevExpress.XtraEditors.ComboBoxEdit();
             this.splitUserControl = new System.Windows.Forms.SplitContainer();
-            this.tvMain = new NavigationPane();
-            this.imListTreeView = new System.Windows.Forms.ImageList();
-            this.lvMain = new System.Windows.Forms.ListView();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip();
+            this.tvMain = new TotalCommandder.GUI.NavigationPane();
+            this.imListTreeView = new System.Windows.Forms.ImageList(this.components);
+            this.lvMain = new TotalCommandder.GUI.MyView();
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuItemOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemRefresh = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuItemPack = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemUnpack = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.menuItemCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemCut = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemPaste = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.menuItemDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemRename = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.menuItemNew = new System.Windows.Forms.ToolStripMenuItem();
             this.subMenuItemNewFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.subMenuItemNewTextDocument = new System.Windows.Forms.ToolStripMenuItem();
-            this.imList = new System.Windows.Forms.ImageList();
-            this.timer = new System.Windows.Forms.Timer();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuItemProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageLagreListView = new System.Windows.Forms.ImageList(this.components);
+            this.imageSmallListView = new System.Windows.Forms.ImageList(this.components);
+            this.timer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemComboBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cbPath.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitUserControl)).BeginInit();
             this.splitUserControl.Panel1.SuspendLayout();
@@ -91,16 +102,17 @@
             this.btnViewSmall,
             this.btnViewLarge});
             this.ribbonControl1.Location = new System.Drawing.Point(0, 0);
-            this.ribbonControl1.MaxItemId = 28;
+            this.ribbonControl1.MaxItemId = 29;
             this.ribbonControl1.Name = "ribbonControl1";
             this.ribbonControl1.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.ribbonPage1});
+            this.ribbonControl1.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] {
+            this.repositoryItemComboBox1});
             this.ribbonControl1.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonControlStyle.OfficeUniversal;
             this.ribbonControl1.ShowPageHeadersMode = DevExpress.XtraBars.Ribbon.ShowPageHeadersMode.ShowOnMultiplePages;
             this.ribbonControl1.ShowToolbarCustomizeItem = false;
             this.ribbonControl1.Size = new System.Drawing.Size(1168, 38);
             this.ribbonControl1.Toolbar.ShowCustomizeItem = false;
-            this.ribbonControl1.Click += new System.EventHandler(this.ribbonControl1_Click);
             // 
             // btnBack
             // 
@@ -222,6 +234,13 @@
             this.ribbonPageGroup3.Name = "ribbonPageGroup3";
             this.ribbonPageGroup3.Text = "ribbonPageGroup3";
             // 
+            // repositoryItemComboBox1
+            // 
+            this.repositoryItemComboBox1.AutoHeight = false;
+            this.repositoryItemComboBox1.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.repositoryItemComboBox1.Name = "repositoryItemComboBox1";
+            // 
             // cbPath
             // 
             this.cbPath.Dock = System.Windows.Forms.DockStyle.Top;
@@ -241,6 +260,7 @@
             // splitUserControl
             // 
             this.splitUserControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitUserControl.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitUserControl.Location = new System.Drawing.Point(0, 62);
             this.splitUserControl.Name = "splitUserControl";
             // 
@@ -252,7 +272,7 @@
             // 
             this.splitUserControl.Panel2.Controls.Add(this.lvMain);
             this.splitUserControl.Size = new System.Drawing.Size(1168, 608);
-            this.splitUserControl.SplitterDistance = 318;
+            this.splitUserControl.SplitterDistance = 197;
             this.splitUserControl.TabIndex = 2;
             // 
             // tvMain
@@ -266,7 +286,7 @@
             this.tvMain.Location = new System.Drawing.Point(0, 0);
             this.tvMain.Name = "tvMain";
             this.tvMain.SelectedImageIndex = 0;
-            this.tvMain.Size = new System.Drawing.Size(318, 608);
+            this.tvMain.Size = new System.Drawing.Size(197, 608);
             this.tvMain.StateImageList = this.imListTreeView;
             this.tvMain.TabIndex = 0;
             this.tvMain.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.tvMain_AfterExpand);
@@ -276,7 +296,7 @@
             // 
             this.imListTreeView.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imListTreeView.ImageStream")));
             this.imListTreeView.TransparentColor = System.Drawing.Color.Transparent;
-            this.imListTreeView.Images.SetKeyName(0, "MyComputerIcon.png");
+            this.imListTreeView.Images.SetKeyName(0, "myCoputerIcon.png");
             // 
             // lvMain
             // 
@@ -286,11 +306,11 @@
             this.lvMain.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvMain.FullRowSelect = true;
             this.lvMain.LabelEdit = true;
-            this.lvMain.LargeImageList = this.imList;
+            this.lvMain.LargeImageList = this.imageLagreListView;
             this.lvMain.Location = new System.Drawing.Point(0, 0);
             this.lvMain.Name = "lvMain";
-            this.lvMain.Size = new System.Drawing.Size(846, 608);
-            this.lvMain.SmallImageList = this.imList;
+            this.lvMain.Size = new System.Drawing.Size(967, 608);
+            this.lvMain.SmallImageList = this.imageSmallListView;
             this.lvMain.TabIndex = 0;
             this.lvMain.UseCompatibleStateImageBehavior = false;
             this.lvMain.View = System.Windows.Forms.View.Details;
@@ -310,15 +330,22 @@
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemOpen,
             this.menuItemRefresh,
+            this.toolStripSeparator2,
             this.menuItemPack,
             this.menuItemUnpack,
+            this.toolStripSeparator3,
             this.menuItemCopy,
             this.menuItemCut,
             this.menuItemPaste,
+            this.toolStripSeparator4,
             this.menuItemDelete,
-            this.menuItemNew});
+            this.menuItemRename,
+            this.toolStripSeparator5,
+            this.menuItemNew,
+            this.toolStripSeparator6,
+            this.menuItemProperties});
             this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(170, 238);
+            this.contextMenu.Size = new System.Drawing.Size(170, 320);
             this.contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenu_Opening);
             // 
             // menuItemOpen
@@ -337,6 +364,11 @@
             this.menuItemRefresh.Text = "Refresh";
             this.menuItemRefresh.Click += new System.EventHandler(this.menuItemRefresh_Click);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(166, 6);
+            // 
             // menuItemPack
             // 
             this.menuItemPack.Image = global::TotalCommandder.Properties.Resources.packIcon;
@@ -352,6 +384,11 @@
             this.menuItemUnpack.Size = new System.Drawing.Size(169, 26);
             this.menuItemUnpack.Text = "Unpack";
             this.menuItemUnpack.Click += new System.EventHandler(this.menuItemUnpack_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(166, 6);
             // 
             // menuItemCopy
             // 
@@ -383,6 +420,11 @@
             this.menuItemPaste.Text = "Paste";
             this.menuItemPaste.Click += new System.EventHandler(this.menuItemPaste_Click);
             // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(166, 6);
+            // 
             // menuItemDelete
             // 
             this.menuItemDelete.Enabled = false;
@@ -392,6 +434,20 @@
             this.menuItemDelete.Size = new System.Drawing.Size(169, 26);
             this.menuItemDelete.Text = "Delete";
             this.menuItemDelete.Click += new System.EventHandler(this.menuItemDelete_Click);
+            // 
+            // menuItemRename
+            // 
+            this.menuItemRename.Image = global::TotalCommandder.Properties.Resources.rename;
+            this.menuItemRename.Name = "menuItemRename";
+            this.menuItemRename.ShortcutKeys = System.Windows.Forms.Keys.F2;
+            this.menuItemRename.Size = new System.Drawing.Size(169, 26);
+            this.menuItemRename.Text = "Rename";
+            this.menuItemRename.Click += new System.EventHandler(this.menuItemRename_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(166, 6);
             // 
             // menuItemNew
             // 
@@ -424,11 +480,29 @@
             this.subMenuItemNewTextDocument.Text = "Text Document";
             this.subMenuItemNewTextDocument.Click += new System.EventHandler(this.subMenuItemNewTextDocument_Click);
             // 
-            // imList
+            // toolStripSeparator6
             // 
-            this.imList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imList.ImageSize = new System.Drawing.Size(32, 32);
-            this.imList.TransparentColor = System.Drawing.Color.Transparent;
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(166, 6);
+            // 
+            // menuItemProperties
+            // 
+            this.menuItemProperties.Name = "menuItemProperties";
+            this.menuItemProperties.Size = new System.Drawing.Size(169, 26);
+            this.menuItemProperties.Text = "Properties";
+            this.menuItemProperties.Click += new System.EventHandler(this.menuItemProperties_Click);
+            // 
+            // imageLagreListView
+            // 
+            this.imageLagreListView.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageLagreListView.ImageSize = new System.Drawing.Size(32, 32);
+            this.imageLagreListView.TransparentColor = System.Drawing.Color.Transparent;
+            // 
+            // imageSmallListView
+            // 
+            this.imageSmallListView.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageSmallListView.ImageSize = new System.Drawing.Size(20, 20);
+            this.imageSmallListView.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // timer
             // 
@@ -443,9 +517,8 @@
             this.Controls.Add(this.ribbonControl1);
             this.Name = "uc_DirectoryList";
             this.Size = new System.Drawing.Size(1168, 670);
-            this.Load += new System.EventHandler(this.uc_DirectoryList_Load);
-            this.Leave += new System.EventHandler(this.uc_DirectoryList_Leave);
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemComboBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cbPath.Properties)).EndInit();
             this.splitUserControl.Panel1.ResumeLayout(false);
             this.splitUserControl.Panel2.ResumeLayout(false);
@@ -474,13 +547,7 @@
         }
         private System.Windows.Forms.SplitContainer splitUserControl;
         private NavigationPane tvMain;
-
-        public System.Windows.Forms.ListView LvMain
-        {
-            get { return lvMain; }
-            set { lvMain = value; }
-        }
-        private System.Windows.Forms.ImageList imList;
+        private System.Windows.Forms.ImageList imageSmallListView;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem menuItemOpen;
         private System.Windows.Forms.ToolStripMenuItem menuItemCopy;
@@ -500,12 +567,27 @@
         private System.Windows.Forms.Timer timer;
         private DevExpress.XtraBars.BarButtonItem btnRefresh;
         private System.Windows.Forms.ToolStripMenuItem menuItemRefresh;
-        private System.Windows.Forms.ListView lvMain;
+        private MyView lvMain;
+
+        internal MyView LvMain
+        {
+            get { return lvMain; }
+            set { lvMain = value; }
+        }
         private DevExpress.XtraBars.BarSubItem btnView;
         private DevExpress.XtraBars.BarCheckItem btnViewLarge;
         private DevExpress.XtraBars.BarCheckItem btnViewSmall;
         private DevExpress.XtraBars.BarCheckItem btnViewList;
         private DevExpress.XtraBars.BarCheckItem btnViewDetail;
         private DevExpress.XtraBars.BarCheckItem btnViewTiles;
+        private DevExpress.XtraEditors.Repository.RepositoryItemComboBox repositoryItemComboBox1;
+        private System.Windows.Forms.ToolStripMenuItem menuItemRename;
+        private System.Windows.Forms.ToolStripMenuItem menuItemProperties;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ImageList imageLagreListView;
     }
 }

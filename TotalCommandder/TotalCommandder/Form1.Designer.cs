@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.ribbonControl1 = new DevExpress.XtraBars.Ribbon.RibbonControl();
             this.btnPack = new DevExpress.XtraBars.BarButtonItem();
@@ -47,17 +48,8 @@
             this.btnNotepad = new DevExpress.XtraBars.BarButtonItem();
             this.btnFind = new DevExpress.XtraBars.BarButtonItem();
             this.btnReviewFind = new DevExpress.XtraBars.BarButtonItem();
-            this.barButtonItem1 = new DevExpress.XtraBars.BarButtonItem();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.Group2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.ribbonPage2 = new DevExpress.XtraBars.Ribbon.RibbonPage();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip();
-            this.menuItemOpen = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuItemCopy = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuItemCut = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuItemPaste = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuItemDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuItemNewFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel6 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -65,10 +57,10 @@
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel7 = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitMain = new System.Windows.Forms.SplitContainer();
-            this.timer = new System.Windows.Forms.Timer();
+            this.timer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).BeginInit();
-            this.contextMenu.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitMain)).BeginInit();
             this.splitMain.SuspendLayout();
@@ -96,23 +88,22 @@
             this.btnPermanentlyDelete,
             this.btnNotepad,
             this.btnFind,
-            this.btnReviewFind,
-            this.barButtonItem1});
+            this.btnReviewFind});
             this.ribbonControl1.Location = new System.Drawing.Point(0, 0);
             this.ribbonControl1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.ribbonControl1.MaxItemId = 26;
+            this.ribbonControl1.MaxItemId = 28;
             this.ribbonControl1.Name = "ribbonControl1";
             this.ribbonControl1.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
-            this.ribbonPage1,
-            this.ribbonPage2});
+            this.ribbonPage1});
             this.ribbonControl1.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonControlStyle.Office2010;
             this.ribbonControl1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.ribbonControl1.ShowApplicationButton = DevExpress.Utils.DefaultBoolean.False;
             this.ribbonControl1.ShowDisplayOptionsMenuButton = DevExpress.Utils.DefaultBoolean.False;
             this.ribbonControl1.ShowExpandCollapseButton = DevExpress.Utils.DefaultBoolean.False;
+            this.ribbonControl1.ShowPageHeadersMode = DevExpress.XtraBars.Ribbon.ShowPageHeadersMode.ShowOnMultiplePages;
             this.ribbonControl1.ShowQatLocationSelector = false;
             this.ribbonControl1.ShowToolbarCustomizeItem = false;
-            this.ribbonControl1.Size = new System.Drawing.Size(1392, 155);
+            this.ribbonControl1.Size = new System.Drawing.Size(1392, 128);
             this.ribbonControl1.Toolbar.ShowCustomizeItem = false;
             // 
             // btnPack
@@ -211,6 +202,7 @@
             // btnDelete
             // 
             this.btnDelete.Caption = "Delete";
+            this.btnDelete.Enabled = false;
             this.btnDelete.Id = 13;
             this.btnDelete.LargeGlyph = global::TotalCommandder.Properties.Resources.cancel_32x32;
             this.btnDelete.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] {
@@ -260,14 +252,6 @@
             this.btnReviewFind.Name = "btnReviewFind";
             this.btnReviewFind.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnReviewFind_ItemClick);
             // 
-            // barButtonItem1
-            // 
-            this.barButtonItem1.Caption = "Send Mail";
-            this.barButtonItem1.Glyph = global::TotalCommandder.Properties.Resources.emailtemplate_16x16;
-            this.barButtonItem1.Id = 25;
-            this.barButtonItem1.LargeGlyph = global::TotalCommandder.Properties.Resources.emailtemplate_32x32;
-            this.barButtonItem1.Name = "barButtonItem1";
-            // 
             // ribbonPage1
             // 
             this.ribbonPage1.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
@@ -290,77 +274,11 @@
             this.Group2.ItemLinks.Add(this.btnPack, true);
             this.Group2.ItemLinks.Add(this.btnUnPack);
             this.Group2.ItemLinks.Add(this.btnNotepad);
-            this.Group2.ItemLinks.Add(this.barButtonItem1);
             this.Group2.ItemLinks.Add(this.btnSelectAll, true);
             this.Group2.ItemLinks.Add(this.btnNoneSelect);
             this.Group2.Name = "Group2";
             this.Group2.ShowCaptionButton = false;
             this.Group2.Text = "View";
-            // 
-            // ribbonPage2
-            // 
-            this.ribbonPage2.Name = "ribbonPage2";
-            this.ribbonPage2.Text = "ribbonPage2";
-            // 
-            // contextMenu
-            // 
-            this.contextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuItemOpen,
-            this.menuItemCopy,
-            this.menuItemCut,
-            this.menuItemPaste,
-            this.menuItemDelete,
-            this.menuItemNewFolder});
-            this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(214, 160);
-            // 
-            // menuItemOpen
-            // 
-            this.menuItemOpen.Enabled = false;
-            this.menuItemOpen.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.menuItemOpen.Name = "menuItemOpen";
-            this.menuItemOpen.Size = new System.Drawing.Size(213, 26);
-            this.menuItemOpen.Text = "Open";
-            // 
-            // menuItemCopy
-            // 
-            this.menuItemCopy.Enabled = false;
-            this.menuItemCopy.Name = "menuItemCopy";
-            this.menuItemCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.menuItemCopy.Size = new System.Drawing.Size(213, 26);
-            this.menuItemCopy.Text = "Copy";
-            // 
-            // menuItemCut
-            // 
-            this.menuItemCut.Enabled = false;
-            this.menuItemCut.Name = "menuItemCut";
-            this.menuItemCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.menuItemCut.Size = new System.Drawing.Size(213, 26);
-            this.menuItemCut.Text = "Cut";
-            // 
-            // menuItemPaste
-            // 
-            this.menuItemPaste.Enabled = false;
-            this.menuItemPaste.Name = "menuItemPaste";
-            this.menuItemPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.menuItemPaste.Size = new System.Drawing.Size(213, 26);
-            this.menuItemPaste.Text = "Paste";
-            // 
-            // menuItemDelete
-            // 
-            this.menuItemDelete.Enabled = false;
-            this.menuItemDelete.Name = "menuItemDelete";
-            this.menuItemDelete.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            this.menuItemDelete.Size = new System.Drawing.Size(213, 26);
-            this.menuItemDelete.Text = "Delete";
-            // 
-            // menuItemNewFolder
-            // 
-            this.menuItemNewFolder.Name = "menuItemNewFolder";
-            this.menuItemNewFolder.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.menuItemNewFolder.Size = new System.Drawing.Size(213, 26);
-            this.menuItemNewFolder.Text = "New Folder";
             // 
             // statusStrip1
             // 
@@ -371,7 +289,8 @@
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel4,
-            this.toolStripStatusLabel5});
+            this.toolStripStatusLabel5,
+            this.toolStripStatusLabel7});
             this.statusStrip1.Location = new System.Drawing.Point(0, 748);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1392, 25);
@@ -421,12 +340,19 @@
             this.toolStripStatusLabel5.Size = new System.Drawing.Size(183, 20);
             this.toolStripStatusLabel5.Text = "Ctrl+N New Folder";
             // 
+            // toolStripStatusLabel7
+            // 
+            this.toolStripStatusLabel7.Name = "toolStripStatusLabel7";
+            this.toolStripStatusLabel7.Padding = new System.Windows.Forms.Padding(50, 0, 0, 0);
+            this.toolStripStatusLabel7.Size = new System.Drawing.Size(211, 20);
+            this.toolStripStatusLabel7.Text = "Delete -> Delete Items";
+            // 
             // splitMain
             // 
             this.splitMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitMain.Location = new System.Drawing.Point(0, 155);
+            this.splitMain.Location = new System.Drawing.Point(0, 128);
             this.splitMain.Name = "splitMain";
-            this.splitMain.Size = new System.Drawing.Size(1392, 593);
+            this.splitMain.Size = new System.Drawing.Size(1392, 620);
             this.splitMain.SplitterDistance = 696;
             this.splitMain.TabIndex = 4;
             // 
@@ -444,13 +370,13 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.ribbonControl1);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MinimumSize = new System.Drawing.Size(1404, 779);
             this.Name = "Form1";
             this.Ribbon = this.ribbonControl1;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "My Total Commander - 15520994";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).EndInit();
-            this.contextMenu.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitMain)).EndInit();
@@ -464,13 +390,6 @@
 
         private DevExpress.XtraBars.Ribbon.RibbonControl ribbonControl1;
         private DevExpress.XtraBars.Ribbon.RibbonPage ribbonPage1;
-        private System.Windows.Forms.ContextMenuStrip contextMenu;
-        private System.Windows.Forms.ToolStripMenuItem menuItemOpen;
-        private System.Windows.Forms.ToolStripMenuItem menuItemCopy;
-        private System.Windows.Forms.ToolStripMenuItem menuItemCut;
-        private System.Windows.Forms.ToolStripMenuItem menuItemPaste;
-        private System.Windows.Forms.ToolStripMenuItem menuItemDelete;
-        private System.Windows.Forms.ToolStripMenuItem menuItemNewFolder;
         private DevExpress.XtraBars.BarButtonItem btnPack;
         private DevExpress.XtraBars.BarButtonItem btnUnPack;
         private System.Windows.Forms.StatusStrip statusStrip1;
@@ -481,11 +400,9 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel6;
         private DevExpress.XtraBars.SkinRibbonGalleryBarItem skinRibbonGalleryBarItem1;
-        private DevExpress.XtraBars.Ribbon.RibbonPage ribbonPage2;
         private System.Windows.Forms.SplitContainer splitMain;
         private DevExpress.XtraBars.BarCheckItem chkOneScreen;
         private DevExpress.XtraBars.BarCheckItem chkTwoScreen;
-        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup2;
         private DevExpress.XtraBars.BarButtonItem btnCopy;
         private DevExpress.XtraBars.BarButtonItem btnCut;
         private DevExpress.XtraBars.BarButtonItem btnPaste;
@@ -500,7 +417,7 @@
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup Group2;
         private DevExpress.XtraBars.BarButtonItem btnFind;
         private DevExpress.XtraBars.BarButtonItem btnReviewFind;
-        private DevExpress.XtraBars.BarButtonItem barButtonItem1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel7;
     }
 }
 

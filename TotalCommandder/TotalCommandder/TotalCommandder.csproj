@@ -106,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BLL\ClassBLL.cs" />
+    <Compile Include="BLL\FilePropertiesDialog.cs" />
     <Compile Include="BLL\ShellIcon.cs" />
     <Compile Include="Find\FindForm.cs">
       <SubType>Form</SubType>
@@ -125,19 +126,16 @@
     <Compile Include="GetNewFolderName\GetFolderNameForm.Designer.cs">
       <DependentUpon>GetFolderNameForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\MyView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="GUI\uc_DirectoryList.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="GUI\uc_DirectoryList.Designer.cs">
       <DependentUpon>uc_DirectoryList.cs</DependentUpon>
     </Compile>
-    <Compile Include="Mail\SendMailForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Mail\SendMailForm.Designer.cs">
-      <DependentUpon>SendMailForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="NavigationPane.cs">
+    <Compile Include="GUI\NavigationPane.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Packing\PackingForm.cs">
@@ -165,9 +163,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\uc_DirectoryList.resx">
       <DependentUpon>uc_DirectoryList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mail\SendMailForm.resx">
-      <DependentUpon>SendMailForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Packing\PackingForm.resx">
       <DependentUpon>PackingForm.cs</DependentUpon>

@@ -18,6 +18,8 @@ namespace TotalCommandder
         private GUI.uc_DirectoryList gui2;
         private Task task;
         private List<string> listReviewFind;
+        private bool isCopy;
+        private List<string> listCopyPath;
 
         public Form1()
         {
@@ -32,40 +34,32 @@ namespace TotalCommandder
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.gui1 = new GUI.uc_DirectoryList(contextMenu);
+            this.gui1 = new GUI.uc_DirectoryList();
             gui1.Dock = DockStyle.Fill;
-            gui1.getCopyAction = new GUI.uc_DirectoryList.DgetCopyAction(copyAction);
+            gui1.CopyAction = new Action<List<string>, bool>(copyAction);
             gui1.getCopyPath = new GUI.uc_DirectoryList.DgetCopyPath(pushCopyPath);
-            gui1.getPasteAction = new GUI.uc_DirectoryList.DgetPasteAction(pasteAction);
-            gui1.getContextMenu = new GUI.uc_DirectoryList.DgetContextMenu(pushContextMenu);
-            gui1.pushContextMenuForParent = new GUI.uc_DirectoryList.DpushContextMenuForParent(setContextMenu);
-            gui1.getRefreshAll = new GUI.uc_DirectoryList.DgetRefreshAll(refreshAll);
-            gui1.setEnabledButton = new GUI.uc_DirectoryList.DsetEnabledButton(setEnabledForSelectItem);
+            gui1.PasteAction = new Action<string>(pasteAction);
+            gui1.getRefreshAll = new Action(refreshAll);
+            gui1.setEnabledButton = new Action<bool>(setEnabledForSelectItem);
             splitMain.Panel1.Controls.Add(gui1);
             //------------------------------------------------------------------------------------
-            this.gui2 = new GUI.uc_DirectoryList(contextMenu);
+            this.gui2 = new GUI.uc_DirectoryList();
             gui2.Dock = DockStyle.Fill;
-            gui2.getCopyAction = new GUI.uc_DirectoryList.DgetCopyAction(copyAction);
+            gui2.CopyAction = new Action<List<string>, bool>(copyAction);
             gui2.getCopyPath = new GUI.uc_DirectoryList.DgetCopyPath(pushCopyPath);
-            gui2.getPasteAction = new GUI.uc_DirectoryList.DgetPasteAction(pasteAction);
-            gui2.getContextMenu = new GUI.uc_DirectoryList.DgetContextMenu(pushContextMenu);
-            gui2.pushContextMenuForParent = new GUI.uc_DirectoryList.DpushContextMenuForParent(setContextMenu);
-            gui2.getRefreshAll = new GUI.uc_DirectoryList.DgetRefreshAll(refreshAll);
-            gui2.setEnabledButton = new GUI.uc_DirectoryList.DsetEnabledButton(setEnabledForSelectItem);
+            gui2.PasteAction = new Action<string>(pasteAction);
+            gui2.getRefreshAll = new Action(refreshAll);
+            gui2.setEnabledButton = new Action<bool>(setEnabledForSelectItem);
             splitMain.Panel2.Controls.Add(gui2);
         }
 
         public void refreshAll()
         {
-            this.gui1.showDirectoryAndFiles(this.gui1.ListBack.Peek());
-            this.gui2.showDirectoryAndFiles(this.gui2.ListBack.Peek());
+            this.gui1.LvMain.ShowFromPath(this.gui1.ListBack.Peek());
+            this.gui2.LvMain.ShowFromPath(this.gui2.ListBack.Peek());
         }
 
         #region Thao Tác với file
-
-        private List<string> listCopyPath { get; set; }
-
-        private bool isCopy { get; set; }
 
         private void copyAction(List<string> listPath, bool isCopy)
         {
@@ -74,6 +68,7 @@ namespace TotalCommandder
             this.listCopyPath.Clear();
 
             this.listCopyPath = listPath;
+
         }
 
         //Đẩy đường dẫn cần copy(ListCopyPath) cho giao diện con
@@ -105,30 +100,6 @@ namespace TotalCommandder
 
         #endregion
 
-        #region ContextMenu
-
-        private void setContextMenu()//Thay đổi giá trị item của contextMenu tương ứng với các item bên ngoài
-        {
-            this.contextMenu.Items[0].Enabled = menuItemOpen.Enabled;
-            this.contextMenu.Items[1].Enabled = menuItemCopy.Enabled;
-            this.contextMenu.Items[2].Enabled = menuItemCut.Enabled;
-            this.contextMenu.Items[3].Enabled = menuItemPaste.Enabled;
-        }
-
-        //Đẩy contextMenu cho giao diện con
-        public ContextMenuStrip pushContextMenu()
-        {
-            setContextMenu();
-            return this.contextMenu;
-        }
-
-        //Lấy contextMenu từ giao diện con
-        public void setContextMenu(ContextMenuStrip contextMenu)
-        {
-            this.contextMenu = contextMenu;
-        }
-
-        #endregion
 
         #region Packing Unpacking
 
@@ -151,7 +122,7 @@ namespace TotalCommandder
 
                     this.gui1.LvMain.Clear();
 
-                    this.gui1.showDirectoryAndFiles(this.gui1.ListBack.Peek());
+                    this.gui1.LvMain.ShowFromPath(this.gui1.ListBack.Peek());
                 }
                 catch (Exception ex)
                 {
@@ -186,7 +157,7 @@ namespace TotalCommandder
 
                     this.gui1.LvMain.Clear();
 
-                    this.gui1.showDirectoryAndFiles(this.gui1.ListBack.Peek());
+                    this.gui1.LvMain.ShowFromPath(this.gui1.ListBack.Peek());
                 }
                 catch (Exception ex)
                 {
@@ -339,7 +310,13 @@ namespace TotalCommandder
             foreach (ListViewItem item in lvMain.SelectedItems)
                 listPath.Add(item.Tag.ToString());
 
-            if (listPath.Count > 1)
+            if (listPath.Count == 0)
+            {
+                MessageBox.Show("You must select some items", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                setEnabledForSelectItem(false);
+                return;
+            }
+            else if (listPath.Count > 1)
             {
                 //Nếu có nhiều hơn 1 item thì hiển thị MessBox chung cho các items được xóa
                 if (MessageBox.Show("Are you sure you want to permanetly delete these " + listPath.Count + " items?", "Delete Multipe Items", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes

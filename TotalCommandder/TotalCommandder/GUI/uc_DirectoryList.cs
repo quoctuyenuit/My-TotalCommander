@@ -32,34 +32,14 @@ namespace TotalCommandder.GUI
         public DgetCopyPath getCopyPath;
 
         //Delegate kích hoạt sự kiện khi copy
-        public delegate void DgetCopyAction(List<string> listPath, bool isCopy);
+        public Action<List<string>, bool> CopyAction;
 
-        public DgetCopyAction getCopyAction;
+        public Action<string> PasteAction;
 
-        //Delegate kích hoạt sự kiện khi paste
-        public delegate void DgetPasteAction(string path);
-
-        public DgetPasteAction getPasteAction;
-
-        //delegate lấy contextMenu từ hàm form cha
-        public delegate ContextMenuStrip DgetContextMenu();
-
-        public DgetContextMenu getContextMenu;
-
-        //delegate đẩy contextMenu về cho hàm form1 cha
-        public delegate void DpushContextMenuForParent(ContextMenuStrip contextMenu);
-
-        public DpushContextMenuForParent pushContextMenuForParent;
-
-        //Delegate để gọi hàm bên form1 refresh lại tất cả các giao diện
-        public delegate void DgetRefreshAll();
-
-        public DgetRefreshAll getRefreshAll;
+        public Action getRefreshAll;
 
         //Delegate set Enabled cho các button Copy Cut Paste... ở form1 
-        public delegate void DsetEnabledButton(bool isChecked);
-
-        public DsetEnabledButton setEnabledButton;
+        public Action<bool> setEnabledButton;
 
         #endregion
 
@@ -69,19 +49,7 @@ namespace TotalCommandder.GUI
         //Biến lưu lại tiến trình khi kích hoạt đa tiến trình
         private Task task;
 
-        #region Show
-
-        private void uc_DirectoryList_Load(object sender, EventArgs e)
-        {
-            cbPath.Text = "This PC";
-            cbPath.Properties.Items.Add("This PC");
-            listBack.Push(cbPath.Text);
-            showDirectoryAndFiles(listBack.Peek());
-
-            tvMain.PathSeparator = "C:\\";
-        }
-
-        public uc_DirectoryList(ContextMenuStrip contextMenu)
+        public uc_DirectoryList()
         {
             InitializeComponent();
 
@@ -90,127 +58,29 @@ namespace TotalCommandder.GUI
             this.listBack = new Stack<string>();
 
             this.listForward = new Stack<string>();
-
-            this.contextMenu = contextMenu;
-
         }
 
-        private void showDrives()
+        #region Show
+
+        private void uc_DirectoryList_Load(object sender, EventArgs e)
         {
-            DriveInfo[] drives = DriveInfo.GetDrives();
-            foreach (DriveInfo drive in drives)
-                BLL.ClassBLL.Instances.showDrive(drive, lvMain);
-        }
-
-        private void showDirectories(string path)
-        {
-            DirectoryInfo[] directories = new DirectoryInfo(path).GetDirectories();
-            foreach (DirectoryInfo direc in directories)
-            {
-                if ((direc.Attributes | FileAttributes.Hidden) != direc.Attributes)//Chỉ hiển thị những file không ẩn
-                    BLL.ClassBLL.Instances.showDirectory(direc, lvMain);
-            }
-        }
-
-        private void showFiles(string path)
-        {
-            FileInfo[] files = new DirectoryInfo(path).GetFiles();
-
-            foreach (FileInfo file in files)
-            {
-                if ((file.Attributes | FileAttributes.Hidden) != file.Attributes)//Chỉ hiển thị những file không ẩn
-                    BLL.ClassBLL.Instances.showFile(file, lvMain);
-            }
-        }
-
-        public void showDirectoryAndFiles(string path)//Hiển thị các thư mục và các file hiện tại, hàm trả về đường dẫn mới
-        {
-            if (setEnabledButton != null)
-            {
-                setEnabledButton(false);
-            }
-
-            try
-            {
-                lvMain.LargeImageList.Images.Clear();
-                lvMain.SmallImageList.Images.Clear();
-                lvMain.Clear();
-
-                if (path.Equals("This PC"))
-                {
-                    if (lvMain.View == View.Details)
-                    {
-                        lvMain.Columns.Add("Name", 200);
-                        lvMain.Columns.Add("Type", 100);
-                        lvMain.Columns.Add("Total Size", 100);
-                        lvMain.Columns.Add("Free Space", 100);
-                    }
-                    showDrives();
-                    return;
-                }
-
-                if (lvMain.View == View.Details)
-                {
-                    lvMain.Columns.Add("Name", 200);
-                    lvMain.Columns.Add("Date modified", 150);
-                    lvMain.Columns.Add("Type", 150);
-                    lvMain.Columns.Add("Size", 150);
-                }
-
-                showDirectories(path);
-
-                showFiles(path);
-            }
-            catch (Exception ex) { }
+            cbPath.Text = "This PC";
+            cbPath.Properties.Items.Add("This PC");
+            listBack.Push(cbPath.Text);
         }
 
         private void btnRefresh_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            this.showDirectoryAndFiles(this.listBack.Peek());
+            if (setEnabledButton != null)
+                setEnabledButton(false);
+
+            this.lvMain.ShowFromPath(this.listBack.Peek());
         }
 
         #endregion
-
-        //==============================================================================================================
-        //===============================================InitializeComponent============================================
-        
         //==============================================================================================================
         //==================================================EventClick==================================================
-        #region EventClick
-        private void lvMain_DoubleClick(object sender, EventArgs e)
-        {
-            try
-            {
-                string path = lvMain.SelectedItems[0].Tag.ToString();
-
-                if (File.Exists(path))
-                {
-                    System.Diagnostics.Process.Start(path);
-                    return;
-                }
-
-                this.listBack.Push(path);
-
-                this.Cursor = Cursors.AppStarting;
-
-                showDirectoryAndFiles(listBack.Peek());
-
-                this.Cursor = Cursors.Arrow;
-
-                cbPath.Text = path;
-
-                cbPath.Properties.Items.Add(path);
-
-                btnBack.Enabled = true;//Bật back
-
-                btnForward.Enabled = false;//Tắt forward
-
-                this.listForward.Clear();//Xóa ngăn xếp forward
-            }
-            catch (Exception ex)
-            { }
-        }
-
+        #region Back Forward And Up
 
         public void btnBack_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
@@ -230,7 +100,10 @@ namespace TotalCommandder.GUI
 
                 string path = this.listBack.Peek();
 
-                showDirectoryAndFiles(listBack.Peek());
+                if (setEnabledButton != null)
+                    setEnabledButton(false);
+
+                this.lvMain.ShowFromPath(listBack.Peek());
 
                 this.Cursor = Cursors.Arrow;
 
@@ -247,6 +120,8 @@ namespace TotalCommandder.GUI
                     btnBack.Enabled = false;
 
                 btnForward.Enabled = true;//Bật forward
+
+                this.tvMain.RefreshNavigationPane(path);
             }
             catch (Exception ex)
             { }
@@ -262,9 +137,12 @@ namespace TotalCommandder.GUI
 
             lvMain.Clear();
 
+            if (setEnabledButton != null)
+                setEnabledButton(false);
+
             this.Cursor = Cursors.AppStarting;
 
-            showDirectoryAndFiles(pathForward);
+            this.lvMain.ShowFromPath(pathForward);
 
             this.Cursor = Cursors.Arrow;
 
@@ -276,6 +154,9 @@ namespace TotalCommandder.GUI
                 btnForward.Enabled = false;
 
             btnBack.Enabled = true;//Bật back
+
+            this.tvMain.RefreshNavigationPane(pathForward);
+
         }
 
         private void btnUpTo_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -298,7 +179,10 @@ namespace TotalCommandder.GUI
 
                 this.Cursor = Cursors.AppStarting;
 
-                showDirectoryAndFiles(this.listBack.Peek());
+                if (setEnabledButton != null)
+                    setEnabledButton(false);
+
+                this.lvMain.ShowFromPath(this.listBack.Peek());
 
                 this.Cursor = Cursors.Arrow;
 
@@ -311,6 +195,9 @@ namespace TotalCommandder.GUI
                 btnForward.Enabled = false;
 
                 this.listForward.Clear();
+
+                this.tvMain.RefreshNavigationPane(path);
+
             }
             catch (Exception ex)
             { }
@@ -322,162 +209,29 @@ namespace TotalCommandder.GUI
 
         private void contextMenu_Opening(object sender, CancelEventArgs e)
         {
-            if (getCopyPath != null)
+            foreach (ToolStripItem item in contextMenu.Items)
+                item.Enabled = false;
+
+            menuItemProperties.Enabled = true;
+
+            if (!cbPath.Text.Equals("This PC"))
+                menuItemNew.Enabled = true;
+
+            if (this.lvMain.SelectedItems.Count > 0)
             {
-                if (getCopyPath().Count == 0)
-                    menuItemPaste.Enabled = false;
-                else
-                    menuItemPaste.Enabled = true;
-
-                menuItemOpen.Enabled = false;
-                menuItemPack.Enabled = false;
-                menuItemUnpack.Enabled = false;
-                menuItemCopy.Enabled = false;
-                menuItemCut.Enabled = false;
-                menuItemDelete.Enabled = false;
-
-                if (lvMain.SelectedItems.Count > 0)
-                {
+                if (cbPath.Text.Equals("This PC"))
                     menuItemOpen.Enabled = true;
-                    if (!cbPath.Text.Equals("This PC"))
-                    {
-                        menuItemPack.Enabled = true;
-                        menuItemUnpack.Enabled = true;
-                        menuItemCopy.Enabled = true;
-                        menuItemCut.Enabled = true;
-                        menuItemDelete.Enabled = true;
-                    }
-                }
-            }
-        }
-
-        private void menuItemCopy_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (getCopyAction != null)
-                {
-                    List<string> listPathCopy = new List<string>();
-
-                    foreach (ListViewItem item in lvMain.SelectedItems)
-                        listPathCopy.Add(item.Tag.ToString());
-
-                    getCopyAction(listPathCopy, true);
-                }
-
-                menuItemPaste.Enabled = true;
-            }
-            catch (Exception ex) { }
-        }
-
-        private void menuItemCut_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (getCopyAction != null)
-                {
-                    List<string> listPathCopy = new List<string>();
-
-                    foreach (ListViewItem item in lvMain.SelectedItems)
-                        listPathCopy.Add(item.Tag.ToString());
-                    getCopyAction(listPathCopy, false);
-                }
-
-                menuItemPaste.Enabled = true;
-            }
-            catch (Exception ex) { }
-        }
-
-        private void menuItemPaste_Click(object sender, EventArgs e)
-        {
-            if (getPasteAction != null)
-            {
-                if (!Directory.Exists(cbPath.Text))//Nếu pastePath không tồn tại thì thoát
-                    return;
-
-                this.task = Task.Run(() => getPasteAction(cbPath.Text));
-                this.timer.Start();
-            }
-
-            showDirectoryAndFiles(this.listBack.Peek());
-        }
-
-        public void menuItemDelete_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                List<string> listPath = new List<string>();
-
-                foreach (ListViewItem item in lvMain.SelectedItems)
-                    listPath.Add(item.Tag.ToString());
-
-                if (BLL.ClassBLL.Instances.deleteSendToRecycleBin(listPath))
-                {
-                    foreach (ListViewItem item in lvMain.SelectedItems)
-                        lvMain.Items.RemoveByKey(item.Name);
-                }
-
-                menuItemDelete.Enabled = false;
-            }
-            catch (Exception ex) { }
-        }
-
-        private void menuItemNew_Click(object sender, EventArgs e)
-        {
-            subMenuItemNewFolder.Image = BLL.ShellIcon.GetSmallFolderIcon().ToBitmap();
-            subMenuItemNewTextDocument.Image = BLL.ShellIcon.GetSmallIconFromExtension(".txt").ToBitmap();
-        }
-
-        private void subMenuItemNewFolder_Click(object sender, EventArgs e)
-        {
-            string newFolderName;
-            string newFolderPath;
-
-            int i = 0;
-            do
-            {
-                if (i > 0)
-                    newFolderName = "New Folder (" + i + ")";
                 else
-                    newFolderName = "New Folder";
+                {
+                    foreach (ToolStripItem item in contextMenu.Items)
+                        item.Enabled = true;
+                }
+            }
 
-                newFolderPath = Path.Combine(this.listBack.Peek(), newFolderName);
-
-                i++;
-            } while (Directory.Exists(newFolderPath));
-
-            Directory.CreateDirectory(newFolderPath);
-
-            BLL.ClassBLL.Instances.showDirectory(Microsoft.VisualBasic.FileIO.FileSystem.GetDirectoryInfo(newFolderPath), lvMain);
-
-            lvMain.Items[newFolderName].BeginEdit();
-
-        }
-
-        private void subMenuItemNewTextDocument_Click(object sender, EventArgs e)
-        {
-            string newFileName;
-            string newFilePath;
-
-            int i = 0;
-            do
-            {
-                if (i > 0)
-                    newFileName = "New Text Document (" + i + ").txt";
-                else
-                    newFileName = "New Text Document" + ".txt";
-
-                newFilePath = Path.Combine(this.listBack.Peek(), newFileName);
-
-                i++;
-            } while (File.Exists(newFilePath));
-
-
-            using (FileStream fs = File.Create(newFilePath)) { };
-
-            BLL.ClassBLL.Instances.showFile(Microsoft.VisualBasic.FileIO.FileSystem.GetFileInfo(newFilePath), lvMain);
-
-            lvMain.Items[newFileName].BeginEdit();
+            if (getCopyPath != null && getCopyPath().Count > 0)
+                menuItemPaste.Enabled = true;
+            else
+                menuItemPaste.Enabled = false;
         }
 
         private void menuItemOpen_Click(object sender, EventArgs e)
@@ -487,301 +241,15 @@ namespace TotalCommandder.GUI
 
         private void menuItemRefresh_Click(object sender, EventArgs e)
         {
-            this.showDirectoryAndFiles(this.listBack.Peek());
+            if (setEnabledButton != null)
+                setEnabledButton(false);
+            this.lvMain.ShowFromPath(this.listBack.Peek());
         }
-        #endregion
-        //==============================================================================================================
-        //=================================Passing ContextMenu Between Parent And Child=================================
-        #region Passing ContextMenu Between Parent And Child
-        private void setContextMenu()//Thay đổi giá trị item của contextMenu tương ứng với các item bên ngoài
+
+        private void menuItemRename_Click(object sender, EventArgs e)
         {
-            this.contextMenu.Items[0].Enabled = menuItemOpen.Enabled;
-            this.contextMenu.Items[1].Enabled = menuItemCopy.Enabled;
-            this.contextMenu.Items[2].Enabled = menuItemCut.Enabled;
-            this.contextMenu.Items[3].Enabled = menuItemPaste.Enabled;
+            this.lvMain.SelectedItems[0].BeginEdit();
         }
-
-        private void setItemOfContextMenu()//Thay đổi giá trị của các item trong contextMenu
-        {
-            menuItemOpen.Enabled = this.contextMenu.Items[0].Enabled;
-            menuItemCopy.Enabled = this.contextMenu.Items[1].Enabled;
-            menuItemCut.Enabled = this.contextMenu.Items[2].Enabled;
-            menuItemPaste.Enabled = this.contextMenu.Items[3].Enabled;
-        }
-
-        private void lvMain_Enter(object sender, EventArgs e)
-        {
-            if (getContextMenu != null)
-                this.contextMenu = getContextMenu();
-            setItemOfContextMenu();
-        }
-
-        private void uc_DirectoryList_Leave(object sender, EventArgs e)
-        {
-            setContextMenu();
-            if (pushContextMenuForParent != null)
-                pushContextMenuForParent(this.contextMenu);
-        }
-        #endregion
-        //==============================================================================================================
-        //================================================Combobox event================================================
-        #region ComboboxEvent
-
-        public void cbPath_Properties_QueryCloseUp(object sender, CancelEventArgs e)
-        {
-
-
-            if (cbPath.Text.Equals(listBack.Peek()))//Nếu không thay đổi đường dẫn thì không làm gì
-                return;
-            try
-            {
-                this.listBack.Push(cbPath.Text);
-
-                lvMain.Clear();
-
-                showDirectoryAndFiles(this.listBack.Peek());
-            }
-            catch (Exception ex)
-            {
-                btnBack_ItemClick(null, null);
-                MessageBox.Show("The path is not exists!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-
-        private void cbPath_Properties_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)Keys.Enter)
-            {
-                if (!cbPath.Equals("This PC") || Directory.Exists(cbPath.Text))//Nếu đường dẫn khác This PC hoặc đường dẫn đó tồn tại thì mới được làm việc ngược lại thông báo và thoát
-                    cbPath_Properties_QueryCloseUp(null, null);
-                else
-                {
-                    cbPath.Text = this.listBack.Peek();
-                    MessageBox.Show("The path is not exists!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-            }
-        }
-
-        private void cbPath_TextChanged(object sender, EventArgs e)
-        {
-            if (cbPath.Text.Equals("This PC"))
-                menuItemNew.Enabled = false;
-            else
-                menuItemNew.Enabled = true;
-        }
-        
-        #endregion
-
-        private void lvMain_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!this.listBack.Peek().Equals("This PC") && setEnabledButton != null)
-            {
-                if (lvMain.SelectedItems.Count > 0)
-                    setEnabledButton(true);
-                else
-                    setEnabledButton(false);
-            }
-
-            foreach (ListViewItem item in lvMain.Items)
-                if (item.Selected)
-                {
-                    menuItemOpen.Enabled = true;
-                    menuItemCopy.Enabled = true;
-                    menuItemCut.Enabled = true;
-                    menuItemDelete.Enabled = true;
-                    return;
-                }
-            menuItemOpen.Enabled = false;
-            menuItemCopy.Enabled = false;
-            menuItemCut.Enabled = false;
-            menuItemDelete.Enabled = false;
-        }
-
-        private void lvMain_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (this.lvMain.SelectedItems.Count > 0)
-                    lvMain_DoubleClick(null, null);
-            }
-            else if (e.KeyCode == Keys.Back)
-                btnBack_ItemClick(null, null);
-
-            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Delete && !cbPath.Text.Equals("This PC"))//Nếu người dùng nhấn Shift + Delete và không phải ở This PC thì cho phép xóa
-            {
-                List<string> listPath = new List<string>();
-
-                foreach (ListViewItem item in lvMain.SelectedItems)
-                    listPath.Add(item.Tag.ToString());
-
-                if (listPath.Count > 1)
-                {
-                    //Nếu có nhiều hơn 1 item thì hiển thị MessBox chung cho các items được xóa
-                    if (MessageBox.Show("Are you sure you want to permanetly delete these " + listPath.Count + " items?", "Delete Multipe Items", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes
-                        && BLL.ClassBLL.Instances.deletePermanently(listPath, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs))
-                    {
-                        foreach (ListViewItem item in lvMain.SelectedItems)
-                            lvMain.Items.RemoveByKey(item.Name);
-                    }
-                }
-                else
-                {
-                    //Nếu chỉ có một item thì hiển thị UI của nó
-                    if (BLL.ClassBLL.Instances.deletePermanently(listPath, Microsoft.VisualBasic.FileIO.UIOption.AllDialogs))
-                    {
-                        foreach (ListViewItem item in lvMain.SelectedItems)
-                            lvMain.Items.RemoveByKey(item.Name);
-                    }
-                }
-            }
-            else if (e.KeyCode == Keys.F2)
-            {
-                if (lvMain.SelectedItems.Count > 0)
-                {
-                    ListViewItem item = lvMain.SelectedItems[0];//Lấy Item đang được chọn
-
-                    this.oldNameItem = item.Name;
-
-                    item.BeginEdit();
-                }
-            }
-            else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
-            {
-                foreach (ListViewItem item in lvMain.Items)
-                    item.Selected = true;
-            }
-        }
-
-        //==============================================================================================================
-        //===================================================DragDrop===================================================
-        #region DragDrop
-
-        private void lvMain_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
-                e.Effect = DragDropEffects.Copy;
-            else
-                e.Effect = DragDropEffects.None;
-        }
-
-        private void lvMain_DragDrop(object sender, DragEventArgs e)
-        {
-            try
-            {
-                //Danh sách chứa các file cần copy
-                List<string> listPathCopy = new List<string>();
-
-                //Lấy danh sách các item dropped
-                string[] listItem = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-
-                foreach (string item in listItem)
-                {
-                    //Nếu Drop trong cùng một chỗ thì dừng lại
-                    if (item.Remove(item.LastIndexOf('\\')).Equals(this.listBack.Peek()))
-                        return;
-
-                    //Lấy tên file
-                    string fileName = item.Substring(item.LastIndexOf('\\') + 1);
-
-                    //Nếu fileName null hoặc rỗng thì dừng
-                    if (string.IsNullOrEmpty(fileName))
-                        return;
-
-                    //thêm path của item này vào listPathCopy
-                    listPathCopy.Add(item);
-                }
-
-                if (getCopyAction != null)
-                {
-                    //Gọi hàm copy các file trong danh sách
-                    getCopyAction(listPathCopy, true);
-                }
-
-                if (getPasteAction != null)
-                {
-                    if (!Directory.Exists(cbPath.Text))//Nếu pastePath không tồn tại thì thoát
-                        return;
-
-                    //Gọi hàm paste vào folder đích
-                    this.task = Task.Run(() => getPasteAction(cbPath.Text));
-
-                    //Khởi động bồ timer để kiểm tra khi tiến trình dừng
-                    this.timer.Start();
-                }
-            }
-            catch (Exception ex) { }
-        }
-
-
-        private void lvMain_ItemDrag(object sender, ItemDragEventArgs e)
-        {
-            //Danh sách đường dẫn của các item cần Drag
-            List<string> list = new List<string>();
-
-            foreach (ListViewItem item in lvMain.SelectedItems)
-            {
-                list.Add(item.Tag.ToString());
-            }
-
-            //Chuyển đổi danh sách list trên thành mảng string
-            var Items = list.Cast<string>().ToArray();
-
-            //Tạo một đối tượng DataObject nhận giữ liệu của mảng đường dẫn trên
-            DataObject data = new DataObject(DataFormats.FileDrop, Items);
-
-            data.SetData(Items);
-
-            lvMain.DoDragDrop(data, DragDropEffects.Copy);
-
-        }
-
-        #endregion
-        //==============================================================================================================
-        //================================================TreeView Event================================================
-        #region TreeView Event
-
-        private void tvMain_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            try
-            {
-                string path = e.Node.Tag.ToString();
-
-                this.listBack.Push(path);
-
-                lvMain.Clear();
-
-                this.Cursor = Cursors.AppStarting;
-
-                showDirectoryAndFiles(this.listBack.Peek());
-
-                this.Cursor = Cursors.Arrow;
-
-                cbPath.Text = path;
-
-                cbPath.Properties.Items.Add(path);
-
-                btnBack.Enabled = true;
-
-                e.Node.Expand();
-            }
-            catch (Exception ex)
-            { }
-        }
-
-        private void tvMain_AfterExpand(object sender, TreeViewEventArgs e)
-        {
-            string nameNode = e.Node.Name;
-
-            if (!nameNode.Equals("MyComputer"))
-            {
-                e.Node.Nodes.Clear();
-                this.tvMain.AddDirectory(e.Node);
-            }
-        }
-        #endregion
-        //==============================================================================================================
-        //====================================================Packing===================================================
-        #region Packing
 
         private void menuItemPack_Click(object sender, EventArgs e)
         {
@@ -880,6 +348,463 @@ namespace TotalCommandder.GUI
             }
         }
 
+        private void menuItemCopy_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (CopyAction != null)
+                {
+                    List<string> listPathCopy = new List<string>();
+
+                    foreach (ListViewItem item in lvMain.SelectedItems)
+                        listPathCopy.Add(item.Tag.ToString());
+
+                    CopyAction(listPathCopy, true);
+                }
+
+                menuItemPaste.Enabled = true;
+            }
+            catch (Exception ex) { }
+        }
+
+        private void menuItemCut_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (CopyAction != null)
+                {
+                    List<string> listPathCopy = new List<string>();
+
+                    foreach (ListViewItem item in lvMain.SelectedItems)
+                        listPathCopy.Add(item.Tag.ToString());
+                    CopyAction(listPathCopy, false);
+                }
+
+                menuItemPaste.Enabled = true;
+            }
+            catch (Exception ex) { }
+        }
+
+        private void menuItemPaste_Click(object sender, EventArgs e)
+        {
+            if (PasteAction != null)
+            {
+                if (!Directory.Exists(cbPath.Text))//Nếu pastePath không tồn tại thì thoát
+                    return;
+
+                this.task = Task.Run(() => PasteAction(cbPath.Text));
+                this.timer.Start();
+            }
+            if (setEnabledButton != null)
+                setEnabledButton(false);
+            this.lvMain.ShowFromPath(this.listBack.Peek());
+        }
+
+        public void menuItemDelete_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<string> listPath = new List<string>();
+
+                foreach (ListViewItem item in lvMain.SelectedItems)
+                    listPath.Add(item.Tag.ToString());
+
+                if (BLL.ClassBLL.Instances.deleteSendToRecycleBin(listPath))
+                {
+                    foreach (ListViewItem item in lvMain.SelectedItems)
+                        lvMain.Items.RemoveByKey(item.Name);
+                }
+
+                menuItemDelete.Enabled = false;
+            }
+            catch (Exception ex) { }
+        }
+
+        private void menuItemNew_Click(object sender, EventArgs e)
+        {
+            subMenuItemNewFolder.Image = BLL.ShellIcon.GetSmallFolderIcon().ToBitmap();
+            subMenuItemNewTextDocument.Image = BLL.ShellIcon.GetSmallIconFromExtension(".txt").ToBitmap();
+        }
+
+        private void subMenuItemNewFolder_Click(object sender, EventArgs e)
+        {
+            string newFolderName;
+            string newFolderPath;
+
+            int i = 0;
+            do
+            {
+                if (i > 0)
+                    newFolderName = "New Folder (" + i + ")";
+                else
+                    newFolderName = "New Folder";
+
+                newFolderPath = Path.Combine(this.listBack.Peek(), newFolderName);
+
+                i++;
+            } while (Directory.Exists(newFolderPath));
+
+            Directory.CreateDirectory(newFolderPath);
+
+            BLL.ClassBLL.Instances.showDirectory(Microsoft.VisualBasic.FileIO.FileSystem.GetDirectoryInfo(newFolderPath), lvMain);
+
+            lvMain.Items[newFolderName].BeginEdit();
+
+        }
+
+        private void subMenuItemNewTextDocument_Click(object sender, EventArgs e)
+        {
+            string newFileName;
+            string newFilePath;
+
+            int i = 0;
+            do
+            {
+                if (i > 0)
+                    newFileName = "New Text Document (" + i + ").txt";
+                else
+                    newFileName = "New Text Document" + ".txt";
+
+                newFilePath = Path.Combine(this.listBack.Peek(), newFileName);
+
+                i++;
+            } while (File.Exists(newFilePath));
+
+
+            using (FileStream fs = File.Create(newFilePath)) { };
+
+            BLL.ClassBLL.Instances.showFile(Microsoft.VisualBasic.FileIO.FileSystem.GetFileInfo(newFilePath), lvMain);
+
+            lvMain.Items[newFileName].BeginEdit();
+        }
+
+        private void menuItemProperties_Click(object sender, EventArgs e)
+        {
+            if (this.lvMain.SelectedItems.Count > 0)
+                BLL.FilePropertiesDialog.ShowFileProperties(this.lvMain.SelectedItems[0].Tag.ToString());
+            else
+                BLL.FilePropertiesDialog.ShowFileProperties(this.cbPath.Text);
+        }
+
+        #endregion
+        //==============================================================================================================
+        //================================================Combobox event================================================
+        #region ComboboxEvent
+
+        public void cbPath_Properties_QueryCloseUp(object sender, CancelEventArgs e)
+        {
+
+
+            if (cbPath.Text.Equals(listBack.Peek()))//Nếu không thay đổi đường dẫn thì không làm gì
+                return;
+            try
+            {
+                this.listBack.Push(cbPath.Text);
+
+                lvMain.Clear();
+                if (setEnabledButton != null)
+                    setEnabledButton(false);
+                this.lvMain.ShowFromPath(this.listBack.Peek());
+            }
+            catch (Exception ex)
+            {
+                btnBack_ItemClick(null, null);
+                MessageBox.Show("The path is not exists!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void cbPath_Properties_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                if (!cbPath.Equals("This PC") || Directory.Exists(cbPath.Text))//Nếu đường dẫn khác This PC hoặc đường dẫn đó tồn tại thì mới được làm việc ngược lại thông báo và thoát
+                    cbPath_Properties_QueryCloseUp(null, null);
+                else
+                {
+                    cbPath.Text = this.listBack.Peek();
+                    MessageBox.Show("The path is not exists!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        private void cbPath_TextChanged(object sender, EventArgs e)
+        {
+            if (cbPath.Text.Equals("This PC"))
+                menuItemNew.Enabled = false;
+            else
+                menuItemNew.Enabled = true;
+        }
+
+        #endregion
+        //==============================================================================================================
+        //===================================================ListView===================================================
+        #region ListView Event
+
+        private void lvMain_DoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                string path = lvMain.SelectedItems[0].Tag.ToString();
+
+                if (File.Exists(path))
+                {
+                    System.Diagnostics.Process.Start(path);
+                    return;
+                }
+
+                cbPath.Text = path;
+
+                cbPath.Properties.Items.Add(path);
+
+                this.listBack.Push(path);
+
+                this.Cursor = Cursors.AppStarting;
+
+                if (setEnabledButton != null)
+                    setEnabledButton(false);
+                this.lvMain.ShowFromPath(listBack.Peek());
+
+                this.Cursor = Cursors.Arrow;
+
+                btnBack.Enabled = true;//Bật back
+
+                btnForward.Enabled = false;//Tắt forward
+
+                this.listForward.Clear();//Xóa ngăn xếp forward
+
+                this.tvMain.RefreshNavigationPane(path);
+
+            }
+            catch (Exception ex)
+            { }
+        }
+
+        private void lvMain_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.listBack.Peek().Equals("This PC") && setEnabledButton != null)
+            {
+                if (lvMain.SelectedItems.Count > 0)
+                    setEnabledButton(true);
+                else
+                    setEnabledButton(false);
+            }
+
+            foreach (ListViewItem item in lvMain.Items)
+                if (item.Selected)
+                {
+                    menuItemOpen.Enabled = true;
+                    menuItemCopy.Enabled = true;
+                    menuItemCut.Enabled = true;
+                    menuItemDelete.Enabled = true;
+                    return;
+                }
+            menuItemOpen.Enabled = false;
+            menuItemCopy.Enabled = false;
+            menuItemCut.Enabled = false;
+            menuItemDelete.Enabled = false;
+        }
+
+        private void lvMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (this.lvMain.SelectedItems.Count > 0)
+                    lvMain_DoubleClick(null, null);
+            }
+            else if (e.KeyCode == Keys.Back)
+                btnBack_ItemClick(null, null);
+
+            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Delete && !cbPath.Text.Equals("This PC"))//Nếu người dùng nhấn Shift + Delete và không phải ở This PC thì cho phép xóa
+            {
+                List<string> listPath = new List<string>();
+
+                foreach (ListViewItem item in lvMain.SelectedItems)
+                    listPath.Add(item.Tag.ToString());
+
+                if (listPath.Count > 1)
+                {
+                    //Nếu có nhiều hơn 1 item thì hiển thị MessBox chung cho các items được xóa
+                    if (MessageBox.Show("Are you sure you want to permanetly delete these " + listPath.Count + " items?", "Delete Multipe Items", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes
+                        && BLL.ClassBLL.Instances.deletePermanently(listPath, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs))
+                    {
+                        foreach (ListViewItem item in lvMain.SelectedItems)
+                            lvMain.Items.RemoveByKey(item.Name);
+                    }
+                }
+                else
+                {
+                    //Nếu chỉ có một item thì hiển thị UI của nó
+                    if (BLL.ClassBLL.Instances.deletePermanently(listPath, Microsoft.VisualBasic.FileIO.UIOption.AllDialogs))
+                    {
+                        foreach (ListViewItem item in lvMain.SelectedItems)
+                            lvMain.Items.RemoveByKey(item.Name);
+                    }
+                }
+            }
+            else if (e.KeyCode == Keys.F2)
+            {
+                if (lvMain.SelectedItems.Count > 0)
+                {
+                    ListViewItem item = lvMain.SelectedItems[0];//Lấy Item đang được chọn
+
+                    this.oldNameItem = item.Name;
+
+                    item.BeginEdit();
+                }
+            }
+            else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.A)
+            {
+                foreach (ListViewItem item in lvMain.Items)
+                    item.Selected = true;
+            }
+        }
+
+        private void lvMain_Enter(object sender, EventArgs e)
+        {
+            if (getCopyPath != null && getCopyPath().Count > 0)
+                menuItemPaste.Enabled = true;
+            else
+                menuItemPaste.Enabled = false;
+        }
+
+
+        #endregion
+        //==============================================================================================================
+        //===================================================DragDrop===================================================
+        #region DragDrop
+
+        private void lvMain_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
+                e.Effect = DragDropEffects.Copy;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void lvMain_DragDrop(object sender, DragEventArgs e)
+        {
+            try
+            {
+                //Danh sách chứa các file cần copy
+                List<string> listPathCopy = new List<string>();
+
+                //Lấy danh sách các item dropped
+                string[] listItem = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+                foreach (string item in listItem)
+                {
+                    //Nếu Drop trong cùng một chỗ thì dừng lại
+                    if (item.Remove(item.LastIndexOf('\\')).Equals(this.listBack.Peek()))
+                        return;
+
+                    //Lấy tên file
+                    string fileName = item.Substring(item.LastIndexOf('\\') + 1);
+
+                    //Nếu fileName null hoặc rỗng thì dừng
+                    if (string.IsNullOrEmpty(fileName))
+                        return;
+
+                    //thêm path của item này vào listPathCopy
+                    listPathCopy.Add(item);
+                }
+
+                if (CopyAction != null)
+                {
+                    //Gọi hàm copy các file trong danh sách
+                    CopyAction(listPathCopy, true);
+                }
+
+                if (PasteAction != null)
+                {
+                    if (!Directory.Exists(cbPath.Text))//Nếu pastePath không tồn tại thì thoát
+                        return;
+
+                    //Gọi hàm paste vào folder đích
+                    this.task = Task.Run(() => PasteAction(cbPath.Text));
+
+                    //Khởi động bồ timer để kiểm tra khi tiến trình dừng
+                    this.timer.Start();
+                }
+            }
+            catch (Exception ex) { }
+        }
+
+
+        private void lvMain_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            //Danh sách đường dẫn của các item cần Drag
+            List<string> list = new List<string>();
+
+            foreach (ListViewItem item in lvMain.SelectedItems)
+            {
+                list.Add(item.Tag.ToString());
+            }
+
+            //Chuyển đổi danh sách list trên thành mảng string
+            var Items = list.Cast<string>().ToArray();
+
+            //Tạo một đối tượng DataObject nhận giữ liệu của mảng đường dẫn trên
+            DataObject data = new DataObject(DataFormats.FileDrop, Items);
+
+            data.SetData(Items);
+
+            lvMain.DoDragDrop(data, DragDropEffects.Copy);
+
+        }
+
+        #endregion
+        //==============================================================================================================
+        //================================================TreeView Event================================================
+        #region TreeView Event
+
+        private void tvMain_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            try
+            {
+                string path = e.Node.Tag.ToString();
+
+                if (path.Equals(cbPath.Text))
+                    return;
+
+                this.listBack.Push(path);
+
+                lvMain.Clear();
+
+                this.Cursor = Cursors.AppStarting;
+
+                if (setEnabledButton != null)
+                    setEnabledButton(false);
+
+                this.lvMain.ShowFromPath(this.listBack.Peek());
+
+                this.Cursor = Cursors.Arrow;
+
+                cbPath.Text = path;
+
+                cbPath.Properties.Items.Add(path);
+
+                btnBack.Enabled = true;
+
+                btnForward.Enabled = false;//Tắt forward
+
+                this.listForward.Clear();//Xóa ngăn xếp forward
+
+            }
+            catch (Exception ex)
+            { }
+        }
+
+        private void tvMain_AfterExpand(object sender, TreeViewEventArgs e)
+        {
+
+            string nameNode = e.Node.Name;
+
+            if (!nameNode.Equals("MyComputer"))
+            {
+                e.Node.Nodes.Clear();
+                this.tvMain.AddDirectory(e.Node);
+            }
+        }
         #endregion
         //==============================================================================================================
         //=====================================================Rename===================================================
@@ -962,7 +887,11 @@ namespace TotalCommandder.GUI
             if (btnViewLarge.Checked)
             {
                 this.lvMain.View = View.LargeIcon;
-                showDirectoryAndFiles(this.listBack.Peek());
+
+                if (setEnabledButton != null)
+                    setEnabledButton(false);
+
+                this.lvMain.ShowFromPath(this.listBack.Peek());
                 btnViewDetail.Checked = btnViewSmall.Checked = btnViewList.Checked = btnViewTiles.Checked = false;
             }
             else
@@ -974,7 +903,10 @@ namespace TotalCommandder.GUI
             if (btnViewSmall.Checked)
             {
                 this.lvMain.View = View.SmallIcon;
-                showDirectoryAndFiles(this.listBack.Peek());
+                if (setEnabledButton != null)
+                    setEnabledButton(false);
+
+                this.lvMain.ShowFromPath(this.listBack.Peek());
                 btnViewDetail.Checked = btnViewLarge.Checked = btnViewList.Checked = btnViewTiles.Checked = false;
             }
             else
@@ -986,7 +918,10 @@ namespace TotalCommandder.GUI
             if (btnViewList.Checked)
             {
                 this.lvMain.View = View.List;
-                showDirectoryAndFiles(this.listBack.Peek());
+                if (setEnabledButton != null)
+                    setEnabledButton(false);
+
+                this.lvMain.ShowFromPath(this.listBack.Peek());
                 btnViewDetail.Checked = btnViewLarge.Checked = btnViewSmall.Checked = btnViewTiles.Checked = false;
             }
             else
@@ -998,7 +933,11 @@ namespace TotalCommandder.GUI
             if (btnViewDetail.Checked)
             {
                 this.lvMain.View = View.Details;
-                showDirectoryAndFiles(this.listBack.Peek());
+
+                if (setEnabledButton != null)
+                    setEnabledButton(false);
+
+                this.lvMain.ShowFromPath(this.listBack.Peek());
                 btnViewList.Checked = btnViewLarge.Checked = btnViewSmall.Checked = btnViewTiles.Checked = false;
             }
             else
@@ -1010,7 +949,10 @@ namespace TotalCommandder.GUI
             if (btnViewTiles.Checked)
             {
                 this.lvMain.View = View.Tile;
-                showDirectoryAndFiles(this.listBack.Peek());
+                if (setEnabledButton != null)
+                    setEnabledButton(false);
+
+                this.lvMain.ShowFromPath(this.listBack.Peek());
                 btnViewList.Checked = btnViewLarge.Checked = btnViewSmall.Checked = btnViewDetail.Checked = false;
             }
             else
@@ -1031,9 +973,18 @@ namespace TotalCommandder.GUI
             }
         }
 
-        private void ribbonControl1_Click(object sender, EventArgs e)
+        private void tvMain_MouseClick(object sender, MouseEventArgs e)
         {
-
         }
+
+        private void tvMain_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            MessageBox.Show(this.tvMain.SelectedNode.Tag.ToString());
+        }
+
+       
+
+       
+
     }
 }
