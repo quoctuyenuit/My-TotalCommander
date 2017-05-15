@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uc_DirectoryList));
             this.ribbonControl1 = new DevExpress.XtraBars.Ribbon.RibbonControl();
             this.btnBack = new DevExpress.XtraBars.BarButtonItem();
@@ -50,9 +49,9 @@
             this.cbPath = new DevExpress.XtraEditors.ComboBoxEdit();
             this.splitUserControl = new System.Windows.Forms.SplitContainer();
             this.tvMain = new TotalCommandder.GUI.NavigationPane();
-            this.imListTreeView = new System.Windows.Forms.ImageList(this.components);
+            this.imListTreeView = new System.Windows.Forms.ImageList();
             this.lvMain = new TotalCommandder.GUI.MyView();
-            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip();
             this.menuItemOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -72,9 +71,9 @@
             this.subMenuItemNewTextDocument = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.menuItemProperties = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageLagreListView = new System.Windows.Forms.ImageList(this.components);
-            this.imageSmallListView = new System.Windows.Forms.ImageList(this.components);
-            this.timer = new System.Windows.Forms.Timer(this.components);
+            this.imageLagreListView = new System.Windows.Forms.ImageList();
+            this.imageSmallListView = new System.Windows.Forms.ImageList();
+            this.timer = new System.Windows.Forms.Timer();
             ((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemComboBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cbPath.Properties)).BeginInit();
@@ -567,7 +566,6 @@
         private System.Windows.Forms.Timer timer;
         private DevExpress.XtraBars.BarButtonItem btnRefresh;
         private System.Windows.Forms.ToolStripMenuItem menuItemRefresh;
-        private MyView lvMain;
 
         internal MyView LvMain
         {
@@ -589,5 +587,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ImageList imageLagreListView;
+        private MyView lvMain;
     }
 }
