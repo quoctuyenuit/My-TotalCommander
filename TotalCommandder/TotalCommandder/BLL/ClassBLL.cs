@@ -31,7 +31,15 @@ namespace TotalCommandder.BLL
 
         public void showDrive(DriveInfo drive, ListView lvMain)
         {
-            string text = ((string.IsNullOrEmpty(drive.VolumeLabel)) ? "Local Drive" : drive.VolumeLabel) + " (" + drive.Name + ")";
+            string text;
+            try
+            {
+                text = ((string.IsNullOrEmpty(drive.VolumeLabel)) ? "Local Drive" : drive.VolumeLabel) + " (" + drive.Name + ")";
+            }
+            catch (Exception ex)
+            {
+                text = drive.Name;
+            }
 
             lvMain.LargeImageList.Images.Add(BLL.ShellIcon.GetLargeIcon(drive.Name).ToBitmap());
             lvMain.SmallImageList.Images.Add(BLL.ShellIcon.GetLargeIcon(drive.Name).ToBitmap());
@@ -47,8 +55,15 @@ namespace TotalCommandder.BLL
                 string[] strItem = new string[4];
                 strItem[0] = drive.Name;
                 strItem[1] = drive.GetType().Name;
-                strItem[2] = Math.Round(drive.TotalSize / (Math.Pow(2, 30))).ToString() + " GB";
-                strItem[3] = Math.Round(drive.TotalFreeSpace / (Math.Pow(2, 30))).ToString() + " GB";
+                try
+                {
+                    strItem[2] = Math.Round(drive.TotalSize / (Math.Pow(2, 30))).ToString() + " GB";
+                    strItem[3] = Math.Round(drive.TotalFreeSpace / (Math.Pow(2, 30))).ToString() + " GB";
+                }
+                catch(Exception ex)
+                {
+                    strItem[2] = strItem[3] = "";//Xử lý trường hợp gặp ổ đĩa ảo không có các trường dữ liệu Size
+                }
 
                 item = new ListViewItem(strItem);
             }

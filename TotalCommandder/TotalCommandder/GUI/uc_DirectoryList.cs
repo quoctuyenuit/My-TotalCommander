@@ -213,6 +213,7 @@ namespace TotalCommandder.GUI
                 item.Enabled = false;
 
             menuItemProperties.Enabled = true;
+            menuItemRefresh.Enabled = true;
 
             if (!cbPath.Text.Equals("This PC"))
                 menuItemNew.Enabled = true;
@@ -376,7 +377,11 @@ namespace TotalCommandder.GUI
                     List<string> listPathCopy = new List<string>();
 
                     foreach (ListViewItem item in lvMain.SelectedItems)
+                    {
                         listPathCopy.Add(item.Tag.ToString());
+                        item.ForeColor = Color.LightGray;
+                    }
+
                     CopyAction(listPathCopy, false);
                 }
 
@@ -981,6 +986,7 @@ namespace TotalCommandder.GUI
         {
             MessageBox.Show(this.tvMain.SelectedNode.Tag.ToString());
         }
+
 
        
 

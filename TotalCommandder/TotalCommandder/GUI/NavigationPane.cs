@@ -36,28 +36,13 @@ namespace TotalCommandder.GUI
         {
             parentNode.Expand();
 
-            //if (string.IsNullOrEmpty(Tag))
-            //    return parentNode;
-            //string tempName;
-            //if (Tag.Contains('\\'))
-            //    tempName = Tag.Remove(Tag.IndexOf('\\'));
-            //else
-            //    tempName = Tag;
-            //Tag = Tag.Substring(Tag.IndexOf('\\') + 1);
-
-            //foreach(TreeNode node in parentNode.Nodes)
-            //{
-            //    if (node.Name.Equals(tempName))
-            //        return FindNode(Tag, node);
-            //}
-
             if (Tag.Equals(parentNode.Tag.ToString()))
                 return parentNode;
 
             foreach (TreeNode node in parentNode.Nodes)
             {
                 string tagStr = node.Tag.ToString();
-                if (tagStr.LastIndexOf('\\') == tagStr.Length-1)
+                if (tagStr.LastIndexOf('\\') == tagStr.Length - 1)
                     tagStr = tagStr.Remove(tagStr.LastIndexOf('\\'));
                 if (Tag.Contains(tagStr) && (Tag.Equals(tagStr) || Tag[tagStr.Length].Equals('\\')))
                     return FindNode(Tag, node);
@@ -82,10 +67,7 @@ namespace TotalCommandder.GUI
                     break;
                 }
 
-
             this.SelectedNode = FindNode(path, parentNode);
-            
-
         }
 
         //Thêm một node gốc vào treeView
@@ -164,9 +146,18 @@ namespace TotalCommandder.GUI
             DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
             foreach (DriveInfo drive in drives)
             {
-                string name = ((string.IsNullOrEmpty(drive.VolumeLabel)) ? "Local Drive" : drive.VolumeLabel) + " (" + drive.Name + ")";
+                string name;
+                try
+                {
+                    name = ((string.IsNullOrEmpty(drive.VolumeLabel)) ? "Local Drive" : drive.VolumeLabel) + " (" + drive.Name + ")";
+                }
+                catch(Exception ex)
+                {
+                    name = drive.Name;
+                }
+
                 TreeNode driveNode = new TreeNode();
-                
+
                 driveNode.Name = drive.Name.Remove(drive.Name.LastIndexOf('\\'));
                 driveNode.Text = name;
                 this.ImageList.Images.Add(drive.Name, BLL.ShellIcon.GetLargeIcon(drive.Name));
@@ -190,9 +181,7 @@ namespace TotalCommandder.GUI
                 if (temp.Contains("Hidden") || temp.Contains(" Hidden"))
                     continue;
 
-
                 this.AddNode(parentNode, directory.Name, "FolderIcon", directory.FullName);
-
             }
         }
 
